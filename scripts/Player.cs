@@ -8,9 +8,9 @@ public partial class Player : CharacterBody2D
 {
 	public const float MinVelocity = 20.0f;				// units per tick
 	public const float Acceleration = 40.0f;			// units per tick^2
-    public const float RunningAcceleration = 60.0f;		// units per tick^2
-    public const float JumpVelocity = -280.0f;			// units per tick
-    public const float SpeedRetention = 0.8f;			// how much speed the player retains between physics updates; used as a soft speed cap
+	public const float RunningAcceleration = 60.0f;		// units per tick^2
+	public const float JumpVelocity = -280.0f;			// units per tick
+	public const float SpeedRetention = 0.8f;			// how much speed the player retains between physics updates; used as a soft speed cap
 	public const float Friction = 0.8f;					// how fast the player slows to a stop; lower is faster
 
 	public const int InputBuffer = 6;					// frames; how early can an input be pressed and still register
@@ -19,10 +19,10 @@ public partial class Player : CharacterBody2D
 
 	int movementLock = 0;		// frames; used for preventing player movement for a set time
 	bool isRunning = false;
-    bool isKicking = false;
-    int airTime = 0;			// frames; how long has the character spent in the air
-    int jumpBuffer = 0;			// frames; is a jump action buffered and how much time is left
-    int kickBuffer = 0;         // frames; is a kick action buffered and how much time is left
+	bool isKicking = false;
+	int airTime = 0;			// frames; how long has the character spent in the air
+	int jumpBuffer = 0;			// frames; is a jump action buffered and how much time is left
+	int kickBuffer = 0;			// frames; is a kick action buffered and how much time is left
 
 
 	private void setAnimation(string animation)
@@ -30,12 +30,12 @@ public partial class Player : CharacterBody2D
 		GetNode<AnimatedSprite2D>("AnimatedSprite2D").Play(animation);
 	}
 
-    public override void _Ready()
-    {
+	public override void _Ready()
+	{
 		GD.Print("LOADED PLAYER.CS");
-    }
+	}
 
-    public override void _PhysicsProcess(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
 		Vector2 velocity = Velocity;
 
@@ -62,9 +62,9 @@ public partial class Player : CharacterBody2D
 			}
 		}
 
-        // Handle Jump
-        var rand = new Random();
-        if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
+		// Handle Jump
+		var rand = new Random();
+		if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
 		{
 			if ((IsOnFloor() || airTime < CoyoteTime) && movementLock <= 0)
 			{
@@ -106,7 +106,7 @@ public partial class Player : CharacterBody2D
 			{
 				// Deceleration when no movement is applied
 				velocity.X *= Friction;
-            }
+			}
 		}
 		else
 		{
@@ -119,8 +119,8 @@ public partial class Player : CharacterBody2D
 			// var = bool ? true : false
 			velocity.X += isRunning
 				? direction * RunningAcceleration	// running
-                : direction * Acceleration;			// walking
-        }
+				: direction * Acceleration;			// walking
+		}
 
 
 		// Animation Handling
@@ -139,15 +139,15 @@ public partial class Player : CharacterBody2D
 				setAnimation("walk");
 			}
 
-            // Handling sprite facing; if direction == 0.0f, the facing stays the same
+			// Handling sprite facing; if direction == 0.0f, the facing stays the same
 			if (direction == -1.0f)
 			{
 				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = true;
 			}
 			else
 			{
-                GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = false;
-            }
+				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = false;
+			}
 		}
 		else
 		{
@@ -177,7 +177,7 @@ public partial class Player : CharacterBody2D
 		}
 
 
-        Velocity = velocity;
+		Velocity = velocity;
 		MoveAndSlide();
 	}
 }
