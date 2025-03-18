@@ -1,0 +1,48 @@
+[gd_scene load_steps=8 format=3 uid="uid://btimyafuh6u0b"]
+
+[ext_resource type="Script" path="res://scripts/collectible.gd" id="1_223uj"]
+[ext_resource type="Texture2D" uid="uid://behw43jut2p55" path="res://sprites/kenney-platformer-tilemap.png" id="2_c7sh6"]
+[ext_resource type="AudioStream" uid="uid://dsor4jgmlroow" path="res://sounds/pickupCoin.wav" id="3_amenx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7lsa2"]
+size = Vector2(12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jcx7c"]
+atlas = ExtResource("2_c7sh6")
+region = Rect2(209, 133, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5usi7"]
+atlas = ExtResource("2_c7sh6")
+region = Rect2(228, 133, 18, 18)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2ceoh"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jcx7c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5usi7")
+}],
+"loop": true,
+"name": &"default",
+"speed": 1.0
+}]
+
+[node name="Collectible" type="Area2D"]
+collision_layer = 4
+collision_mask = 4
+script = ExtResource("1_223uj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_7lsa2")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_2ceoh")
+frame_progress = 0.584078
+
+[node name="CoinPickupSfx" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_amenx")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="finished" from="CoinPickupSfx" to="." method="_on_coin_pickup_sfx_finished"]

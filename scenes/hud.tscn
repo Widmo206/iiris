@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdkfv6fox1rji"]
+
+[ext_resource type="Script" path="res://scripts/hud.gd" id="1_d8lho"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_d8lho")
+
+[node name="CurrentLevel" type="Label" parent="."]
+offset_left = 8.0
+offset_right = 62.0
+offset_bottom = 26.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Level 1"
+
+[node name="CoinCounter" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 24.0
+offset_right = 69.0
+offset_bottom = 50.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Coins: 0"
+
+[node name="FpsCounter" type="Label" parent="."]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -80.0
+offset_right = -18.0
+offset_bottom = 49.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "FPS: 0.0
+UPS: 0.0"

@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://blgbposcfuyxt"
+path="res://.godot/imported/Ove Melaa - Dark Blue.ogg-f8c0a9c519e0384bcd77fd68785d0ff6.oggvorbisstr"
+
+[deps]
+
+source_file="res://sounds/Ove Melaa - Dark Blue.ogg"
+dest_files=["res://.godot/imported/Ove Melaa - Dark Blue.ogg-f8c0a9c519e0384bcd77fd68785d0ff6.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
