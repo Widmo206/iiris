@@ -1,1 +1,3 @@
-# iiris
+# IIRIS
+
+A fast-paced, momentum platformer 
