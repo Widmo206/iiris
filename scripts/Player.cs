@@ -32,7 +32,7 @@ public partial class Player : CharacterBody2D
 
 	public override void _Ready()
 	{
-		GD.Print("LOADED PLAYER.CS");
+		GD.Print("LOADED Player.cs");
 	}
 
 	public override void _PhysicsProcess(double delta)

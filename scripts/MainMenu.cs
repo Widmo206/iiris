@@ -3,13 +3,40 @@ using System;
 
 public partial class MainMenu : Node2D
 {
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		GD.Print("LOADED MainMenu.cs");
+		GetNode<Button>("Options/StartButton").GrabFocus();
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		if (!OS.HasFeature("pc"))
+		{
+			GetNode<Button>("Options/FullscreenButton").Hide();
+			GetNode<Button>("Options/ExitButton").Hide();
+		}
+	}
+
+	public void OnStartButtonPressed()
+	{
+		GetTree().ChangeSceneToFile("res://scenes/level_1.tscn");
+	}
+
+	public void OnFullscreenButtonPressed()
+	{
+		if (DisplayServer.WindowGetMode() == DisplayServer.WindowMode.Fullscreen)
+		{
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Windowed);
+		}
+		else
+		{
+			DisplayServer.WindowSetMode(DisplayServer.WindowMode.Fullscreen);
+		}
+	}
+
+	public void OnExitButtonPressed()
+	{
+		GetTree().Quit();
 	}
 }
