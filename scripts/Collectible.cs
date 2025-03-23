@@ -15,6 +15,7 @@ public partial class Collectible : Area2D
 
 	public void OnBodyEntered()
 	{
+		// TODO: update this when global.gd gets rewritten
 		int coinsCollected = (int)GetNode("/root/Global").Get("coins_collected");
 		coinsCollected++;
 		GetNode("/root/Global").Set("coins_collected", (Variant)coinsCollected);
