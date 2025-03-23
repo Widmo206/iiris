@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://btimyafuh6u0b"]
 
-[ext_resource type="Script" path="res://scripts/collectible.gd" id="1_223uj"]
+[ext_resource type="Script" path="res://scripts/Collectible.cs" id="1_cow24"]
 [ext_resource type="Texture2D" uid="uid://behw43jut2p55" path="res://sprites/kenney-platformer-tilemap.png" id="2_c7sh6"]
 [ext_resource type="AudioStream" uid="uid://dsor4jgmlroow" path="res://sounds/pickupCoin.wav" id="3_amenx"]
 
@@ -32,7 +32,7 @@ animations = [{
 [node name="Collectible" type="Area2D"]
 collision_layer = 4
 collision_mask = 4
-script = ExtResource("1_223uj")
+script = ExtResource("1_cow24")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_7lsa2")
@@ -45,5 +45,6 @@ frame_progress = 0.584078
 [node name="CoinPickupSfx" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_amenx")
 
+[connection signal="body_entered" from="." to="." method="OnBodyEntered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="finished" from="CoinPickupSfx" to="." method="_on_coin_pickup_sfx_finished"]
