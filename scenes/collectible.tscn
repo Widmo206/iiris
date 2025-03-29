@@ -47,4 +47,5 @@ stream = ExtResource("3_amenx")
 
 [connection signal="body_entered" from="." to="." method="OnBodyEntered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="finished" from="CoinPickupSfx" to="." method="OnCoinPickupSfxFinished"]
 [connection signal="finished" from="CoinPickupSfx" to="." method="_on_coin_pickup_sfx_finished"]

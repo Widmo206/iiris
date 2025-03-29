@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://db7xefnkc1u2y"]
 
-[ext_resource type="Script" path="res://scripts/door.gd" id="1_512d4"]
 [ext_resource type="Texture2D" uid="uid://cmqs20f73i2mf" path="res://sprites/monochrome_tilemap_transparent.png" id="1_bceib"]
+[ext_resource type="Script" path="res://scripts/Door.cs" id="1_en765"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0nd05"]
 size = Vector2(16, 16)
@@ -24,7 +24,7 @@ animations = [{
 [node name="Door" type="Area2D"]
 collision_layer = 2
 collision_mask = 2
-script = ExtResource("1_512d4")
+script = ExtResource("1_en765")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_0nd05")
@@ -32,4 +32,5 @@ shape = SubResource("RectangleShape2D_0nd05")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_f5i3v")
 
+[connection signal="body_entered" from="." to="." method="OnBodyEntered"]
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -13,12 +13,14 @@ public partial class Collectible : Area2D
 	[Signal]
 	public delegate void CoinCollectedEventHandler();
 
-	public void OnBodyEntered()
+	public void OnBodyEntered(Node2D collidingEntity)
 	{
+		GD.Print("Detected Player!");
+
 		// TODO: update this when global.gd gets rewritten
-		int coinsCollected = (int)GetNode("/root/Global").Get("coins_collected");
+		int coinsCollected = (int)GetNode("/root/Global").Get("coinsCollected");
 		coinsCollected++;
-		GetNode("/root/Global").Set("coins_collected", (Variant)coinsCollected);
+		GetNode("/root/Global").Set("coinsCollected", (Variant)coinsCollected);
 
 		var rand = new Random();
 		// Why didn't I add the random pitch earlier? 
