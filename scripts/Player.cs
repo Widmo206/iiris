@@ -6,7 +6,14 @@ using System;
 
 public partial class Player : CharacterBody2D
 {
-	public const float MinVelocity = 20.0f;				// units per tick
+	public const float MinVelocity = 20.0f;				// units per tick; if the player moves slower than that while on the ground, they'll stop immediately
+	public const float Mass = 40.0f;					// kilograms;
+	public const float WalkingSpeed = 2.0f;				// meters/second; the speed at which the PC will attempt to walk
+	public const float MaxWalkingSpeed = 3.0f;			// meters/second; the highest speed at which the PC will be considered as walking
+	public const float RunningSpeed = 5.0f;				// meters/second; the speed at which the PC will attempt to run
+	public const float MaxRunningSpeed = 3.0f;			// meters/second; the highest speed at which the PC will be considered as walking
+
+
 	public const float Acceleration = 40.0f;			// units per tick^2
 	public const float RunningAcceleration = 60.0f;		// units per tick^2
 	public const float JumpVelocity = -280.0f;			// units per tick
@@ -176,6 +183,9 @@ public partial class Player : CharacterBody2D
 			isKicking = false;
 		}
 
+
+		GetNode<Label>("../HUD/PositionDisplay").Text = "Position:\n    x: " + Position.X.ToString() + "\n    y: " + Position.Y.ToString();
+		GetNode<Label>("../HUD/VelocityDisplay").Text = "Velocity:\n    x: " + Velocity.X.ToString() + "\n    y: " + Velocity.Y.ToString();
 
 		Velocity = velocity;
 		MoveAndSlide();

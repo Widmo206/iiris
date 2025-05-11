@@ -22,6 +22,7 @@ public partial class Hud : CanvasLayer
 	public override void _Process(double delta)
 	{
 		FPS = 1 / (float)delta;
+		// TODO: Figure out how to force a precision of 2 decimal places
 		string text = "FPS: " + FPS.ToString() + "\nUPS: " + UPS.ToString();
 		GetNode<Label>("FpsCounter").Text = text;
 	}

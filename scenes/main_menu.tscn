@@ -111,5 +111,5 @@ tile_set = SubResource("TileSet_aw7d7")
 [connection signal="pressed" from="Options/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="Options/FullscreenButton" to="." method="OnFullscreenButtonPressed"]
 [connection signal="pressed" from="Options/FullscreenButton" to="." method="_on_fullscreen_button_pressed"]
-[connection signal="pressed" from="Options/ExitButton" to="." method="OnExitButtonPressed"]
 [connection signal="pressed" from="Options/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="Options/ExitButton" to="." method="OnExitButtonPressed"]
