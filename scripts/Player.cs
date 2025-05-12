@@ -6,17 +6,23 @@ using System;
 
 public partial class Player : CharacterBody2D
 {
-	public const float MinVelocity = 20.0f;				// units per tick; if the player moves slower than that while on the ground, they'll stop immediately
-	public const float Mass = 40.0f;					// kilograms;
-	public const float WalkingSpeed = 2.0f;				// meters/second; the speed at which the PC will attempt to walk
-	public const float MaxWalkingSpeed = 3.0f;			// meters/second; the highest speed at which the PC will be considered as walking
-	public const float RunningSpeed = 5.0f;				// meters/second; the speed at which the PC will attempt to run
-	public const float MaxRunningSpeed = 3.0f;			// meters/second; the highest speed at which the PC will be considered as walking
+	public const float MinVelocity = 10.0f;				// units per second; if the player is moving slower than that (without input) while on the ground, they'll stop immediately
+	public const float WalkingSpeed = 50.0f;			// units/second; the speed at which the PC will attempt to walk
+	public const float MaxWalkingSpeed = 75.0f;         // units/second; the highest speed at which the PC will be considered as walking
+	public const float RunningSpeed = 200.0f;           // units/second; the speed at which the PC will attempt to run
+	public const float MaxRunningSpeed = 300.0f;        // units/second; the highest speed at which the PC will be considered as walking
 
+	public const float Mass = 40.0f;                    // kilograms;
+	public const float AccelerationForce = 1600.0f;     // kg*u / s^2; magnitude of the force applied when the player is accelerating
+	public const float RunningForceMultiplier = 1.5f;   // how much more acceleration force is applied when trying to run
+	public const float JumpMomentum = 11200.0f;         // kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
 
-	public const float Acceleration = 40.0f;			// units per tick^2
-	public const float RunningAcceleration = 60.0f;		// units per tick^2
-	public const float JumpVelocity = -280.0f;			// units per tick
+	public const float DefaultStaticFrictionCoefficient = 0.6f;     // determines friction when coming to a stop; higher coefficient => more friction
+	public const float DefaultDynamicFrictionCoefficient = 0.3f;    // determines friction when moving faster than max running speed; higher coefficient => more friction
+
+	public const float Acceleration = 40.0f;			// units per second^2
+	public const float RunningAcceleration = 60.0f;		// units per second^2
+	public const float JumpVelocity = -280.0f;			// units per second
 	public const float SpeedRetention = 0.8f;			// how much speed the player retains between physics updates; used as a soft speed cap
 	public const float Friction = 0.8f;					// how fast the player slows to a stop; lower is faster
 
@@ -24,9 +30,13 @@ public partial class Player : CharacterBody2D
 	public const int CoyoteTime = 6;					// frames; how long after leaving a platform the player can still jump
 	public const int InteractionLock = 20;				// frames; how long to lock the player's movement when interacting with something
 
-	int movementLock = 0;		// frames; used for preventing player movement for a set time
+	int movementLock = 0;       // frames; used for preventing player movement for a set time
+	string movementState = "standing";
+	//Array movementStates = [""];
+	bool isTryingToRun = false;
 	bool isRunning = false;
 	bool isKicking = false;
+	bool isGrounded = false;
 	int airTime = 0;			// frames; how long has the character spent in the air
 	int jumpBuffer = 0;			// frames; is a jump action buffered and how much time is left
 	int kickBuffer = 0;			// frames; is a kick action buffered and how much time is left
@@ -45,20 +55,23 @@ public partial class Player : CharacterBody2D
 	public override void _PhysicsProcess(double delta)
 	{
 		Vector2 velocity = Velocity;
+		isGrounded = IsOnFloor();
 
 		// Gravity
-		if (!IsOnFloor())
+		if (isGrounded)
+		{
+			airTime = 0;
+		}
+		else
 		{
 			velocity += GetGravity() * (float)delta;
 			airTime += 1;
-		}
-		else {
-			airTime = 0;
+
 		}
 
 		// Handle Interaction
 		if (Input.IsActionJustPressed("interact") || kickBuffer > 0) {
-			if (IsOnFloor() && movementLock <= 0)
+			if (isGrounded && movementLock <= 0)
 			{
 				isKicking = true;
 				// kickBuffer = 0;
@@ -73,11 +86,11 @@ public partial class Player : CharacterBody2D
 		var rand = new Random();
 		if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
 		{
-			if ((IsOnFloor() || airTime < CoyoteTime) && movementLock <= 0)
+			if ((isGrounded || airTime < CoyoteTime) && movementLock <= 0)
 			{
 				jumpBuffer = 0;
 				airTime += CoyoteTime + 1; // to prevent jumping several times at once
-				velocity.Y = JumpVelocity;
+				velocity.Y = JumpMomentum/Mass;
 				GetNode<AudioStreamPlayer>("JumpSfx").PitchScale = 1.0f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
 				GetNode<AudioStreamPlayer>("JumpSfx").Play();
 			}
@@ -89,9 +102,13 @@ public partial class Player : CharacterBody2D
 		// Handle Running
 		if (Input.IsActionPressed("run"))
 		{
-			isRunning = true;
+			isTryingToRun = true;
 		}
 		else {
+			isTryingToRun = false;
+		}
+		if (velocity.X < MaxWalkingSpeed)
+		{
 			isRunning = false;
 		}
 
