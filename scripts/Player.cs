@@ -6,40 +6,33 @@ using System;
 
 public partial class Player : CharacterBody2D
 {
-	public const float MinVelocity = 10.0f;				// units per second; if the player is moving slower than that (without input) while on the ground, they'll stop immediately
-	public const float WalkingSpeed = 50.0f;			// units/second; the speed at which the PC will attempt to walk
-	public const float MaxWalkingSpeed = 75.0f;         // units/second; the highest speed at which the PC will be considered as walking
+	public const float MinWalkingSpeed = 10.0f;			// units per second; the lowest speed at which the Player will render with a walking animation
+	public const float WalkingSpeed = 100.0f;			// units/second; the speed at which the PC will attempt to walk
+	public const float MaxWalkingSpeed = 150.0f;         // units/second; the highest speed at which the PC will be considered as walking
 	public const float RunningSpeed = 200.0f;           // units/second; the speed at which the PC will attempt to run
-	public const float MaxRunningSpeed = 300.0f;        // units/second; the highest speed at which the PC will be considered as walking
+	public const float MaxRunningSpeed = 300.0f;        // units/second; the highest speed at which the PC will be considered as running
 
 	public const float Mass = 40.0f;                    // kilograms;
-	public const float AccelerationForce = 1600.0f;     // kg*u / s^2; magnitude of the force applied when the player is accelerating
-	public const float RunningForceMultiplier = 1.5f;   // how much more acceleration force is applied when trying to run
+	public const float AccelerationForce = 800.0f;      // kg*u / s^2; magnitude of the force applied when the player is accelerating
 	public const float JumpMomentum = 11200.0f;         // kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
 
 	public const float DefaultStaticFrictionCoefficient = 0.6f;     // determines friction when coming to a stop; higher coefficient => more friction
 	public const float DefaultDynamicFrictionCoefficient = 0.3f;    // determines friction when moving faster than max running speed; higher coefficient => more friction
 
-	public const float Acceleration = 40.0f;			// units per second^2
-	public const float RunningAcceleration = 60.0f;		// units per second^2
-	public const float JumpVelocity = -280.0f;			// units per second
-	public const float SpeedRetention = 0.8f;			// how much speed the player retains between physics updates; used as a soft speed cap
-	public const float Friction = 0.8f;					// how fast the player slows to a stop; lower is faster
+	public const int InputBuffer = 6;                   // ticks; how early can an input be pressed and still register
+	public const int CoyoteTime = 6;                    // ticks; how long after leaving a platform the player can still jump
+	public const int InteractionLock = 20;              // ticks; how long to lock the player's movement when interacting with something
 
-	public const int InputBuffer = 6;					// frames; how early can an input be pressed and still register
-	public const int CoyoteTime = 6;					// frames; how long after leaving a platform the player can still jump
-	public const int InteractionLock = 20;				// frames; how long to lock the player's movement when interacting with something
-
-	int movementLock = 0;       // frames; used for preventing player movement for a set time
+	int movementLock = 0;       // ticks; used for preventing player movement for a set time
 	string movementState = "standing";
 	//Array movementStates = [""];
-	bool isTryingToRun = false;
 	bool isRunning = false;
+	bool atRunningSpeed = false;
 	bool isKicking = false;
 	bool isGrounded = false;
-	int airTime = 0;			// frames; how long has the character spent in the air
-	int jumpBuffer = 0;			// frames; is a jump action buffered and how much time is left
-	int kickBuffer = 0;			// frames; is a kick action buffered and how much time is left
+	int airTime = 0;			// ticks; how long has the character spent in the air
+	int jumpBuffer = 0;         // ticks; is a jump action buffered and how much time is left
+	int kickBuffer = 0;         // ticks; is a kick action buffered and how much time is left
 
 
 	private void setAnimation(string animation)
@@ -90,7 +83,7 @@ public partial class Player : CharacterBody2D
 			{
 				jumpBuffer = 0;
 				airTime += CoyoteTime + 1; // to prevent jumping several times at once
-				velocity.Y = JumpMomentum/Mass;
+				velocity.Y = -JumpMomentum / Mass;
 				GetNode<AudioStreamPlayer>("JumpSfx").PitchScale = 1.0f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
 				GetNode<AudioStreamPlayer>("JumpSfx").Play();
 			}
@@ -102,14 +95,18 @@ public partial class Player : CharacterBody2D
 		// Handle Running
 		if (Input.IsActionPressed("run"))
 		{
-			isTryingToRun = true;
+			isRunning = true;
 		}
 		else {
-			isTryingToRun = false;
-		}
-		if (velocity.X < MaxWalkingSpeed)
-		{
 			isRunning = false;
+		}
+		if (Mathf.Abs(velocity.X) < MaxWalkingSpeed)
+		{
+			atRunningSpeed = false;
+		}
+		else
+		{
+			atRunningSpeed = true;
 		}
 
 		// Handle Movement
@@ -119,31 +116,47 @@ public partial class Player : CharacterBody2D
 			direction = Input.GetAxis("move_left", "move_right");
 		}
 
-		if (Mathf.Abs(velocity.X) > MinVelocity)
+		float targetVelocity = 0.0f;
+		float dynmicFriction = GetGravity().Y * DefaultDynamicFrictionCoefficient * -Mathf.Sign(velocity.X) * (float)delta;
+		if (direction == 0.0f)
 		{
-			if (direction != 0.0f)
+			// TODO: fix moonwalking
+			if (Mathf.Abs(dynmicFriction) >= Mathf.Abs(velocity.X))
 			{
-				// Slowdown when moving -> soft speed cap
-				velocity.X *= SpeedRetention;
+				velocity.X = 0.0f;
 			}
 			else
 			{
-				// Deceleration when no movement is applied
-				velocity.X *= Friction;
+				velocity.X += dynmicFriction;
 			}
 		}
 		else
 		{
-			velocity.X = 0.0f;
-		}
+			if (isRunning)
+			{
+				targetVelocity = direction * RunningSpeed;
+			}
+			else
+			{
+				targetVelocity = direction * WalkingSpeed;
+			}
 
-		if (direction != 0.0f)
-		{
-			// inline conditional statement, split for clarity
-			// var = bool ? true : false
-			velocity.X += isRunning
-				? direction * RunningAcceleration	// running
-				: direction * Acceleration;			// walking
+			float acceleration = 0.0f;
+			if (Mathf.Abs(velocity.X) >= Mathf.Abs(targetVelocity))
+			{
+				acceleration = dynmicFriction;
+			}
+			else
+			{
+				acceleration = direction * AccelerationForce / Mass;
+				if (Mathf.Abs(velocity.X) > 0.9f * Mathf.Abs(targetVelocity))
+				{
+					acceleration *= 0.5f * (1.0f - Mathf.Cos(Mathf.Pi * (targetVelocity - velocity.X) / (0.2f * targetVelocity)));
+				}
+			}
+			velocity.X += acceleration;
+
+			
 		}
 
 
@@ -152,9 +165,9 @@ public partial class Player : CharacterBody2D
 		{
 			setAnimation("kick");
 		}
-		else if (direction != 0.0f)
+		else if (Mathf.Abs(velocity.X) >= MinWalkingSpeed)
 		{
-			if (isRunning)
+			if (atRunningSpeed)
 			{
 				setAnimation("run");
 			}
@@ -168,7 +181,7 @@ public partial class Player : CharacterBody2D
 			{
 				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = true;
 			}
-			else
+			else if (direction == 1.0f)
 			{
 				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = false;
 			}
