@@ -24,10 +24,11 @@ public partial class Player : CharacterBody2D
 	public const int InteractionLock = 20;              // ticks; how long to lock the player's movement when interacting with something
 
 	int movementLock = 0;       // ticks; used for preventing player movement for a set time
-	string movementState = "standing";
+	//string movementState = "standing";
 	//Array movementStates = [""];
 	bool isRunning = false;
 	bool atRunningSpeed = false;
+	bool atWalkingSpeed = false;
 	bool isKicking = false;
 	bool isGrounded = false;
 	int airTime = 0;			// ticks; how long has the character spent in the air
@@ -103,10 +104,12 @@ public partial class Player : CharacterBody2D
 		if (Mathf.Abs(velocity.X) < MaxWalkingSpeed)
 		{
 			atRunningSpeed = false;
+			atWalkingSpeed = true;
 		}
 		else
 		{
 			atRunningSpeed = true;
+			atWalkingSpeed = false;
 		}
 
 		// Handle Movement
@@ -117,17 +120,16 @@ public partial class Player : CharacterBody2D
 		}
 
 		float targetVelocity = 0.0f;
-		float dynmicFriction = GetGravity().Y * DefaultDynamicFrictionCoefficient * -Mathf.Sign(velocity.X) * (float)delta;
+		float dynamicFriction = GetGravity().Y * DefaultDynamicFrictionCoefficient * -Mathf.Sign(velocity.X) * (float)delta;
 		if (direction == 0.0f)
 		{
-			// TODO: fix moonwalking
-			if (Mathf.Abs(dynmicFriction) >= Mathf.Abs(velocity.X))
+			if (Mathf.Abs(dynamicFriction) >= Mathf.Abs(velocity.X))
 			{
 				velocity.X = 0.0f;
 			}
 			else
 			{
-				velocity.X += dynmicFriction;
+				velocity.X += dynamicFriction;
 			}
 		}
 		else
@@ -142,15 +144,22 @@ public partial class Player : CharacterBody2D
 			}
 
 			float acceleration = 0.0f;
-			if (Mathf.Abs(velocity.X) >= Mathf.Abs(targetVelocity))
+			bool directionAlignedWithVelocity = velocity.X * targetVelocity > 0.0f; // moonwalking fix
+			if (Mathf.Abs(velocity.X) >= Mathf.Abs(targetVelocity) && directionAlignedWithVelocity)
 			{
-				acceleration = dynmicFriction;
+				// Going faster than desired -> friction to slow down
+				// TODO: add different friction based on speed (walking -> static; running -> dynamic)
+				acceleration = dynamicFriction;
 			}
 			else
 			{
 				acceleration = direction * AccelerationForce / Mass;
-				if (Mathf.Abs(velocity.X) > 0.9f * Mathf.Abs(targetVelocity))
+				if (Mathf.Abs(velocity.X) > 0.9f * Mathf.Abs(targetVelocity) && directionAlignedWithVelocity)
 				{
+					// Acceleration fall-off when close to desired speed
+					// I used Desmos to find a nice-looking curve
+					// It was supposed to be a convolution to blend with a deceleration curve above targetVelocity, but I couldn't get it to zero at targetVelocity, so I just gave up and made it blend to zero instead
+					// Also, thanks to whoever made that video about convolutions (3B1B ?)
 					acceleration *= 0.5f * (1.0f - Mathf.Cos(Mathf.Pi * (targetVelocity - velocity.X) / (0.2f * targetVelocity)));
 				}
 			}
