@@ -7,10 +7,10 @@ using System;
 public partial class Player : CharacterBody2D
 {
 	public const float MinWalkingSpeed = 10.0f;			// units per second; the lowest speed at which the Player will render with a walking animation
-	public const float WalkingSpeed = 100.0f;			// units/second; the speed at which the PC will attempt to walk
-	public const float MaxWalkingSpeed = 150.0f;         // units/second; the highest speed at which the PC will be considered as walking
-	public const float RunningSpeed = 200.0f;           // units/second; the speed at which the PC will attempt to run
-	public const float MaxRunningSpeed = 300.0f;        // units/second; the highest speed at which the PC will be considered as running
+	public const float WalkingSpeed = 125.0f;			// units/second; the speed at which the PC will attempt to walk
+	public const float MaxWalkingSpeed = 150.0f;        // units/second; the highest speed at which the PC will be considered as walking
+	public const float RunningSpeed = 250.0f;           // units/second; the speed at which the PC will attempt to run
+	public const float MaxRunningSpeed = 350.0f;        // units/second; the highest speed at which the PC will be considered as running
 
 	public const float Mass = 40.0f;                    // kilograms;
 	public const float AccelerationForce = 800.0f;      // kg*u / s^2; magnitude of the force applied when the player is accelerating
@@ -121,16 +121,33 @@ public partial class Player : CharacterBody2D
 
 		float targetVelocity = 0.0f;
 		float dynamicFriction = GetGravity().Y * DefaultDynamicFrictionCoefficient * -Mathf.Sign(velocity.X) * (float)delta;
-		if (direction == 0.0f)
+		float staticFriction = GetGravity().Y * DefaultStaticFrictionCoefficient * -Mathf.Sign(velocity.X) * (float)delta; // yeah I know static friction works differently
+
+		float friction = 0.0f;
+		if (velocity.X != 0.0f)
 		{
-			if (Mathf.Abs(dynamicFriction) >= Mathf.Abs(velocity.X))
+			if (Mathf.Abs(staticFriction) >= Mathf.Abs(velocity.X))
 			{
-				velocity.X = 0.0f;
+				// to not overshoot and accidentally accelerate the other way
+				friction = -velocity.X;
 			}
 			else
 			{
-				velocity.X += dynamicFriction;
+				if (atWalkingSpeed)
+				{
+					// Faster slowdown when walking
+					friction = staticFriction;
+				}
+				else
+				{
+					friction = dynamicFriction;
+				}
 			}
+		}
+
+		if (direction == 0.0f)
+		{
+			velocity.X += friction;
 		}
 		else
 		{
@@ -148,8 +165,7 @@ public partial class Player : CharacterBody2D
 			if (Mathf.Abs(velocity.X) >= Mathf.Abs(targetVelocity) && directionAlignedWithVelocity)
 			{
 				// Going faster than desired -> friction to slow down
-				// TODO: add different friction based on speed (walking -> static; running -> dynamic)
-				acceleration = dynamicFriction;
+				acceleration = friction;
 			}
 			else
 			{
@@ -161,6 +177,11 @@ public partial class Player : CharacterBody2D
 					// It was supposed to be a convolution to blend with a deceleration curve above targetVelocity, but I couldn't get it to zero at targetVelocity, so I just gave up and made it blend to zero instead
 					// Also, thanks to whoever made that video about convolutions (3B1B ?)
 					acceleration *= 0.5f * (1.0f - Mathf.Cos(Mathf.Pi * (targetVelocity - velocity.X) / (0.2f * targetVelocity)));
+				}
+				else if (!directionAlignedWithVelocity)
+				{
+					// slow down faster when switching direction
+					acceleration += friction;
 				}
 			}
 			velocity.X += acceleration;
