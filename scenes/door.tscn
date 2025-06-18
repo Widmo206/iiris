@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://db7xefnkc1u2y"]
 
 [ext_resource type="Texture2D" uid="uid://cmqs20f73i2mf" path="res://sprites/monochrome_tilemap_transparent.png" id="1_bceib"]
-[ext_resource type="Script" path="res://scripts/Door.cs" id="1_en765"]
+[ext_resource type="Script" uid="uid://kdtx5kck5ma1" path="res://scripts/Door.cs" id="1_en765"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0nd05"]
 size = Vector2(16, 16)
