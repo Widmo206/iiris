@@ -13,17 +13,18 @@ public partial class Player : CharacterBody2D
 	public const float MaxRunningSpeed = 350.0f;        // units/second; the highest speed at which the PC will be considered as running
 
 	public const float Mass = 40.0f;                    // kilograms;
-	public const float AccelerationForce = 800.0f;      // kg*u / s^2; magnitude of the force applied when the player is accelerating
-	public const float JumpMomentum = 11200.0f;         // kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
+	public const float AccelerationForce = 800.0f;      // kg*u / t^2; magnitude of the force applied when the player is accelerating
+	public const float JumpMomentum = 11200.0f;         // kg*u / t; magnitude of the momentum (mass*velocity) applied to the player when jumping
 
-	public const float DefaultStaticFrictionCoefficient = 0.6f;     // determines friction when coming to a stop; higher coefficient => more friction
-	public const float DefaultDynamicFrictionCoefficient = 0.3f;    // determines friction when moving faster than max running speed; higher coefficient => more friction
+	public const float DefaultStaticFrictionCoefficient = 0.6f;     // determines friction when walking; higher coefficient => more friction
+	public const float DefaultDynamicFrictionCoefficient = 0.3f;    // determines friction when running; higher coefficient => more friction
 
 	public const int InputBuffer = 6;                   // ticks; how early can an input be pressed and still register
 	public const int CoyoteTime = 6;                    // ticks; how long after leaving a platform the player can still jump
 	public const int InteractionLock = 20;              // ticks; how long to lock the player's movement when interacting with something
+	public const int UpdatesPerSecond = 60;
 
-	int movementLock = 0;       // ticks; used for preventing player movement for a set time
+	int movementLock = 0;           // ticks; used for preventing player movement for a set time
 	//string movementState = "standing";
 	//Array movementStates = [""];
 	bool isRunning = false;
@@ -31,9 +32,10 @@ public partial class Player : CharacterBody2D
 	bool atWalkingSpeed = false;
 	bool isKicking = false;
 	bool isGrounded = false;
-	int airTime = 0;			// ticks; how long has the character spent in the air
-	int jumpBuffer = 0;         // ticks; is a jump action buffered and how much time is left
-	int kickBuffer = 0;         // ticks; is a kick action buffered and how much time is left
+	int airTime = 0;                // ticks; how long has the character spent in the air
+	int jumpBuffer = 0;             // ticks; is a jump action buffered and how much time is left
+	int kickBuffer = 0;             // ticks; is a kick action buffered and how much time is left
+	Vector2 gravityAcceleration;    // initialized at _Ready()
 
 
 	private void setAnimation(string animation)
@@ -44,12 +46,14 @@ public partial class Player : CharacterBody2D
 	public override void _Ready()
 	{
 		GD.Print("LOADED Player.cs");
+		gravityAcceleration = GetGravity() / UpdatesPerSecond;
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
 		Vector2 velocity = Velocity;
 		isGrounded = IsOnFloor();
+		
 
 		// Gravity
 		if (isGrounded)
@@ -58,7 +62,7 @@ public partial class Player : CharacterBody2D
 		}
 		else
 		{
-			velocity += GetGravity() * (float)delta;
+			velocity += gravityAcceleration;
 			airTime += 1;
 
 		}
@@ -120,8 +124,8 @@ public partial class Player : CharacterBody2D
 		}
 
 		float targetVelocity = 0.0f;
-		float dynamicFriction = GetGravity().Y * DefaultDynamicFrictionCoefficient * -Mathf.Sign(velocity.X) * (float)delta;
-		float staticFriction = GetGravity().Y * DefaultStaticFrictionCoefficient * -Mathf.Sign(velocity.X) * (float)delta; // yeah I know static friction works differently
+		float dynamicFriction = gravityAcceleration.Y * DefaultDynamicFrictionCoefficient * -Mathf.Sign(velocity.X);
+		float staticFriction = gravityAcceleration.Y * DefaultStaticFrictionCoefficient * -Mathf.Sign(velocity.X); // yeah I know static friction works differently
 
 		float friction = 0.0f;
 		if (velocity.X != 0.0f)
@@ -226,11 +230,11 @@ public partial class Player : CharacterBody2D
 		}
 
 		// Variable management
-		if(jumpBuffer > 0)
+		if (jumpBuffer > 0)
 		{
 			jumpBuffer--;
 		}
-		if(kickBuffer > 0)
+		if (kickBuffer > 0)
 		{
 			kickBuffer--;
 		}
