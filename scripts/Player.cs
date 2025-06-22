@@ -35,7 +35,7 @@ public partial class Player : CharacterBody2D
 	int airTime = 0;                // ticks; how long has the character spent in the air
 	int jumpBuffer = 0;             // ticks; is a jump action buffered and how much time is left
 	int kickBuffer = 0;             // ticks; is a kick action buffered and how much time is left
-	Vector2 gravityAcceleration;    // initialized at _Ready()
+	Vector2 gravityAcceleration = new Vector2(0.0f, 980.0f / 60.0f);    // ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
 
 
 	private void setAnimation(string animation)
@@ -46,7 +46,7 @@ public partial class Player : CharacterBody2D
 	public override void _Ready()
 	{
 		GD.Print("LOADED Player.cs");
-		gravityAcceleration = GetGravity() / UpdatesPerSecond;
+		//gravityAcceleration = GetGravity() / UpdatesPerSecond;
 	}
 
 	public override void _PhysicsProcess(double delta)
