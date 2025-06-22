@@ -1,6 +1,6 @@
 [gd_scene load_steps=29 format=3 uid="uid://dv16mjenwd7rn"]
 
-[ext_resource type="Script" path="res://scripts/Player.cs" id="1_8tq0c"]
+[ext_resource type="Script" uid="uid://d5ha03kt30lg" path="res://scripts/Player.cs" id="1_8tq0c"]
 [ext_resource type="Texture2D" uid="uid://cjp6353do2nsq" path="res://sprites/DinoSprites - vita.png" id="2_fuuox"]
 [ext_resource type="AudioStream" uid="uid://y54u2g4dhcu6" path="res://sounds/jump.wav" id="3_gamhb"]
 
