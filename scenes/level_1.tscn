@@ -1,10 +1,9 @@
-[gd_scene load_steps=12 format=4 uid="uid://bi0ujb80nhq84"]
+[gd_scene load_steps=11 format=4 uid="uid://bi0ujb80nhq84"]
 
 [ext_resource type="Script" uid="uid://10uxc3y0kuvf" path="res://scripts/Level.cs" id="1_8rryh"]
 [ext_resource type="PackedScene" uid="uid://db7xefnkc1u2y" path="res://scenes/door.tscn" id="3_fgvtr"]
 [ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="3_jjo02"]
 [ext_resource type="PackedScene" uid="uid://dv16mjenwd7rn" path="res://scenes/player.tscn" id="3_of2wo"]
-[ext_resource type="Script" uid="uid://m761eoke41j3" path="res://scripts/Hud.cs" id="3_pv4cf"]
 [ext_resource type="TileSet" uid="uid://cbyrm545ntndh" path="res://terrain.tres" id="5_e53ng"]
 [ext_resource type="PackedScene" uid="uid://cdkfv6fox1rji" path="res://scenes/hud.tscn" id="5_gmf7b"]
 [ext_resource type="PackedScene" uid="uid://btimyafuh6u0b" path="res://scenes/collectible.tscn" id="5_mc3if"]
@@ -47,7 +46,6 @@ sources/0 = SubResource("TileSetAtlasSource_vhy51")
 script = ExtResource("1_8rryh")
 
 [node name="HUD" parent="." instance=ExtResource("5_gmf7b")]
-script = ExtResource("3_pv4cf")
 
 [node name="Background" type="CanvasLayer" parent="."]
 layer = -1
