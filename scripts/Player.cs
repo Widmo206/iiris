@@ -32,9 +32,11 @@ public partial class Player : CharacterBody2D
 	bool atWalkingSpeed = false;
 	bool isKicking = false;
 	bool isGrounded = false;
+	bool canWalljump = false;
 	int airTime = 0;                // ticks; how long has the character spent in the air
 	int jumpBuffer = 0;             // ticks; is a jump action buffered and how much time is left
 	int kickBuffer = 0;             // ticks; is a kick action buffered and how much time is left
+	float facing = 1.0f;            // 1 = right, -1 = left
 	Vector2 gravityAcceleration = new Vector2(0.0f, 980.0f / 60.0f);    // ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
 
 
@@ -80,7 +82,52 @@ public partial class Player : CharacterBody2D
 			}
 		}
 
-		// Handle Jump
+
+		// Handle Directional Colliders
+		float direction = 0.0f;
+		if (movementLock <= 0)
+		{
+			direction = Input.GetAxis("move_left", "move_right");
+		}
+
+		if (direction > 0.0f)
+		{
+			// Facing right
+			facing = 1.0f;
+		}
+		else if (direction < 0.0f)
+		{
+			// Facing left
+			facing = -1.0f;
+		}
+		// there's probably a better way, but this was convenient (as in, flipping the parent node)
+		GetNode<Area2D>("WalljumpDetector").Scale = new Vector2(facing, 1.0f);
+
+
+		// Check for walljumping
+		canWalljump = false;
+		if (GetNode<Area2D>("WalljumpDetector").OverlapsBody(GetNode<TileMapLayer>("../Terrain/Ground")))
+		{
+			// Touching wall
+			if (isGrounded)
+			{
+				GetNode<AnimatedSprite2D>("WalljumpDetector/Collider/DebugIndicator").Play("not_in_air");
+			}
+			else
+			{
+				GetNode<AnimatedSprite2D>("WalljumpDetector/Collider/DebugIndicator").Play("valid");
+				canWalljump = true;
+			}
+
+		}
+		else
+		{
+			// Not touching wall
+			GetNode<AnimatedSprite2D>("WalljumpDetector/Collider/DebugIndicator").Play("no_wall");
+		}
+
+
+		// Handle Jump and Walljump
 		var rand = new Random();
 		if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
 		{
@@ -92,7 +139,17 @@ public partial class Player : CharacterBody2D
 				GetNode<AudioStreamPlayer>("JumpSfx").PitchScale = 1.0f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
 				GetNode<AudioStreamPlayer>("JumpSfx").Play();
 			}
-			else if (jumpBuffer <= 0) {
+			else if (canWalljump)
+			{
+				jumpBuffer = 0;
+				// GD.Print("Walljumpng!");
+				// velocity.X *= -0.5f;
+				velocity.Y += -JumpMomentum / Mass / Mathf.Sqrt2;
+				velocity.X += -facing * JumpMomentum / Mass / Mathf.Sqrt2;
+				facing *= -1.0f;
+			}
+			else if (jumpBuffer <= 0)
+			{
 				jumpBuffer = InputBuffer;
 			}
 		}
@@ -117,11 +174,8 @@ public partial class Player : CharacterBody2D
 		}
 
 		// Handle Movement
-		float direction = 0.0f;
-		if (movementLock <= 0)
-		{
-			direction = Input.GetAxis("move_left", "move_right");
-		}
+		
+		// direction moved under "Handle Directional Colliders"
 
 		float targetVelocity = 0.0f;
 		float dynamicFriction = gravityAcceleration.Y * DefaultDynamicFrictionCoefficient * -Mathf.Sign(velocity.X);
@@ -210,12 +264,12 @@ public partial class Player : CharacterBody2D
 				setAnimation("walk");
 			}
 
-			// Handling sprite facing; if direction == 0.0f, the facing stays the same
-			if (direction == -1.0f)
+			// Handling sprite facing; facing == 1.0f is right
+			if (facing == -1.0f)
 			{
 				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = true;
 			}
-			else if (direction == 1.0f)
+			else if (facing == 1.0f)
 			{
 				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = false;
 			}

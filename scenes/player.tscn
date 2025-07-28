@@ -1,8 +1,11 @@
-[gd_scene load_steps=29 format=3 uid="uid://dv16mjenwd7rn"]
+[gd_scene load_steps=34 format=3 uid="uid://dv16mjenwd7rn"]
 
 [ext_resource type="Script" uid="uid://d5ha03kt30lg" path="res://scripts/Player.cs" id="1_8tq0c"]
 [ext_resource type="Texture2D" uid="uid://cjp6353do2nsq" path="res://sprites/DinoSprites - vita.png" id="2_fuuox"]
 [ext_resource type="AudioStream" uid="uid://y54u2g4dhcu6" path="res://sounds/jump.wav" id="3_gamhb"]
+[ext_resource type="Texture2D" uid="uid://cbkg5jrkylnnh" path="res://sprites/red.png" id="4_qlg0r"]
+[ext_resource type="Texture2D" uid="uid://cppkphee80t0a" path="res://sprites/yellow.png" id="5_fjrip"]
+[ext_resource type="Texture2D" uid="uid://chnjkh0df10o2" path="res://sprites/green.png" id="5_tuyoq"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bw6ai"]
 atlas = ExtResource("2_fuuox")
@@ -202,6 +205,36 @@ animations = [{
 radius = 6.0
 height = 14.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qhqgy"]
+size = Vector2(2, 2)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fjrip"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_qlg0r")
+}],
+"loop": true,
+"name": &"no_wall",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_fjrip")
+}],
+"loop": true,
+"name": &"not_in_air",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5_tuyoq")
+}],
+"loop": true,
+"name": &"valid",
+"speed": 5.0
+}]
+
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 7
 collision_mask = 7
@@ -214,7 +247,7 @@ animation = &"kick"
 frame = 2
 frame_progress = 1.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="PhysicsCollider" type="CollisionShape2D" parent="."]
 position = Vector2(0, -7)
 shape = SubResource("CapsuleShape2D_jogtl")
 
@@ -228,3 +261,17 @@ drag_vertical_enabled = true
 
 [node name="JumpSfx" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_gamhb")
+
+[node name="WalljumpDetector" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="Collider" type="CollisionShape2D" parent="WalljumpDetector"]
+position = Vector2(6, -7)
+scale = Vector2(1, 2)
+shape = SubResource("RectangleShape2D_qhqgy")
+debug_color = Color(0, 0.8, 1, 0.419608)
+
+[node name="DebugIndicator" type="AnimatedSprite2D" parent="WalljumpDetector/Collider"]
+scale = Vector2(0.063, 0.063)
+sprite_frames = SubResource("SpriteFrames_fjrip")
+animation = &"no_wall"
