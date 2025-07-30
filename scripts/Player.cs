@@ -15,6 +15,7 @@ public partial class Player : CharacterBody2D
 	public const float Mass = 40.0f;                    // kilograms;
 	public const float AccelerationForce = 800.0f;      // kg*u / t^2; magnitude of the force applied when the player is accelerating
 	public const float JumpMomentum = 11200.0f;         // kg*u / t; magnitude of the momentum (mass*velocity) applied to the player when jumping
+	public const float AirControlFactor = 0.5f;         // the PCs acceleration is multiplied by this in the air
 
 	public const float DefaultStaticFrictionCoefficient = 0.6f;     // determines friction when walking; higher coefficient => more friction
 	public const float DefaultDynamicFrictionCoefficient = 0.3f;    // determines friction when running; higher coefficient => more friction
@@ -22,6 +23,7 @@ public partial class Player : CharacterBody2D
 	public const int InputBuffer = 6;                   // ticks; how early can an input be pressed and still register
 	public const int CoyoteTime = 6;                    // ticks; how long after leaving a platform the player can still jump
 	public const int InteractionLock = 20;              // ticks; how long to lock the player's movement when interacting with something
+	public const int WalljumpLock = 6;                  // ticks; ** when walljumping
 	public const int UpdatesPerSecond = 60;
 
 	int movementLock = 0;           // ticks; used for preventing player movement for a set time
@@ -84,24 +86,24 @@ public partial class Player : CharacterBody2D
 
 
 		// Handle Directional Colliders
-		float direction = 0.0f;
+		float direction = 0f;
 		if (movementLock <= 0)
 		{
 			direction = Input.GetAxis("move_left", "move_right");
 		}
-
-		if (direction > 0.0f)
+		// Not using Mathf.Sign() because I don't want to change with no input
+		if (direction > 0f)
 		{
 			// Facing right
-			facing = 1.0f;
+			facing = 1f;
 		}
-		else if (direction < 0.0f)
+		else if (direction < 0f)
 		{
 			// Facing left
-			facing = -1.0f;
+			facing = -1f;
 		}
 		// there's probably a better way, but this was convenient (as in, flipping the parent node)
-		GetNode<Area2D>("WalljumpDetector").Scale = new Vector2(facing, 1.0f);
+		GetNode<Area2D>("WalljumpDetector").Scale = new Vector2(facing, 1f);
 
 
 		// Check for walljumping
@@ -136,17 +138,18 @@ public partial class Player : CharacterBody2D
 				jumpBuffer = 0;
 				airTime += CoyoteTime + 1; // to prevent jumping several times at once
 				velocity.Y = -JumpMomentum / Mass;
-				GetNode<AudioStreamPlayer>("JumpSfx").PitchScale = 1.0f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
+				GetNode<AudioStreamPlayer>("JumpSfx").PitchScale = 1f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
 				GetNode<AudioStreamPlayer>("JumpSfx").Play();
 			}
-			else if (canWalljump)
+			else if (canWalljump && movementLock <= 0)
 			{
 				jumpBuffer = 0;
+				movementLock = WalljumpLock;
 				// GD.Print("Walljumpng!");
 				// velocity.X *= -0.5f;
 				velocity.Y += -JumpMomentum / Mass / Mathf.Sqrt2;
 				velocity.X += -facing * JumpMomentum / Mass / Mathf.Sqrt2;
-				facing *= -1.0f;
+				facing *= -1f; // TIL the decimal point isn't required
 			}
 			else if (jumpBuffer <= 0)
 			{
@@ -177,12 +180,13 @@ public partial class Player : CharacterBody2D
 		
 		// direction moved under "Handle Directional Colliders"
 
-		float targetVelocity = 0.0f;
+		float targetVelocity = 0f;
 		float dynamicFriction = gravityAcceleration.Y * DefaultDynamicFrictionCoefficient * -Mathf.Sign(velocity.X);
 		float staticFriction = gravityAcceleration.Y * DefaultStaticFrictionCoefficient * -Mathf.Sign(velocity.X); // yeah I know static friction works differently
 
-		float friction = 0.0f;
-		if (velocity.X != 0.0f)
+		float friction = 0f;
+		// No friction in the air
+		if (velocity.X != 0f && isGrounded)
 		{
 			if (Mathf.Abs(staticFriction) >= Mathf.Abs(velocity.X))
 			{
@@ -203,12 +207,13 @@ public partial class Player : CharacterBody2D
 			}
 		}
 
-		if (direction == 0.0f)
+		if (direction == 0f)
 		{
 			velocity.X += friction;
 		}
 		else
 		{
+
 			if (isRunning)
 			{
 				targetVelocity = direction * RunningSpeed;
@@ -218,8 +223,8 @@ public partial class Player : CharacterBody2D
 				targetVelocity = direction * WalkingSpeed;
 			}
 
-			float acceleration = 0.0f;
-			bool directionAlignedWithVelocity = velocity.X * targetVelocity > 0.0f; // moonwalking fix
+			float acceleration = 0f;
+			bool directionAlignedWithVelocity = velocity.X * targetVelocity > 0f; // moonwalking fix
 			if (Mathf.Abs(velocity.X) >= Mathf.Abs(targetVelocity) && directionAlignedWithVelocity)
 			{
 				// Going faster than desired -> friction to slow down
@@ -228,17 +233,23 @@ public partial class Player : CharacterBody2D
 			else
 			{
 				acceleration = direction * AccelerationForce / Mass;
+				if (!isGrounded)
+				{
+					acceleration *= AirControlFactor;
+				}
+
 				if (Mathf.Abs(velocity.X) > 0.9f * Mathf.Abs(targetVelocity) && directionAlignedWithVelocity)
 				{
 					// Acceleration fall-off when close to desired speed
 					// I used Desmos to find a nice-looking curve
 					// It was supposed to be a convolution to blend with a deceleration curve above targetVelocity, but I couldn't get it to zero at targetVelocity, so I just gave up and made it blend to zero instead
 					// Also, thanks to whoever made that video about convolutions (3B1B ?)
-					acceleration *= 0.5f * (1.0f - Mathf.Cos(Mathf.Pi * (targetVelocity - velocity.X) / (0.2f * targetVelocity)));
+					acceleration *= 0.5f * (1f - Mathf.Cos(Mathf.Pi * (targetVelocity - velocity.X) / (0.2f * targetVelocity)));
+					// TODO: revisit accel curve so momentum matters more
 				}
 				else if (!directionAlignedWithVelocity)
 				{
-					// slow down faster when switching direction
+					// slow down faster when switching direction (only on ground bc air friction == 0)
 					acceleration += friction;
 				}
 			}
@@ -264,12 +275,12 @@ public partial class Player : CharacterBody2D
 				setAnimation("walk");
 			}
 
-			// Handling sprite facing; facing == 1.0f is right
-			if (facing == -1.0f)
+			// Handling sprite facing; facing == 1f is right
+			if (facing == -1f)
 			{
 				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = true;
 			}
-			else if (facing == 1.0f)
+			else if (facing == 1f)
 			{
 				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = false;
 			}
