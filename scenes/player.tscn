@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://dv16mjenwd7rn"]
+[gd_scene load_steps=35 format=3 uid="uid://dv16mjenwd7rn"]
 
 [ext_resource type="Script" uid="uid://d5ha03kt30lg" path="res://scripts/Player.cs" id="1_8tq0c"]
 [ext_resource type="Texture2D" uid="uid://cjp6353do2nsq" path="res://sprites/DinoSprites - vita.png" id="2_fuuox"]
@@ -235,9 +235,11 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tuyoq"]
+size = Vector2(14, 16)
+
 [node name="Player" type="CharacterBody2D"]
-collision_layer = 7
-collision_mask = 7
+collision_layer = 3
 script = ExtResource("1_8tq0c")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -275,3 +277,13 @@ debug_color = Color(0, 0.8, 1, 0.419608)
 scale = Vector2(0.063, 0.063)
 sprite_frames = SubResource("SpriteFrames_fjrip")
 animation = &"no_wall"
+
+[node name="InteractionTrigger" type="Area2D" parent="."]
+collision_layer = 4
+collision_mask = 0
+
+[node name="Collider" type="CollisionShape2D" parent="InteractionTrigger"]
+position = Vector2(0, -7)
+shape = SubResource("RectangleShape2D_tuyoq")
+disabled = true
+debug_color = Color(0.501073, 0.580938, 3.85046e-07, 0.42)

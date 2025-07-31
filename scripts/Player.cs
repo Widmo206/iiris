@@ -1,11 +1,13 @@
 using Godot;
 using System;
+using System.Text.RegularExpressions;
 
 // I have no idea what I'm doing
 // - Widmo, 2025.02.04
 
 public partial class Player : CharacterBody2D
 {
+	// Physics constants
 	public const float MinWalkingSpeed = 10.0f;			// units per second; the lowest speed at which the Player will render with a walking animation
 	public const float WalkingSpeed = 125.0f;			// units/second; the speed at which the PC will attempt to walk
 	public const float MaxWalkingSpeed = 150.0f;        // units/second; the highest speed at which the PC will be considered as walking
@@ -20,12 +22,14 @@ public partial class Player : CharacterBody2D
 	public const float DefaultStaticFrictionCoefficient = 0.6f;     // determines friction when walking; higher coefficient => more friction
 	public const float DefaultDynamicFrictionCoefficient = 0.2f;    // determines friction when running; higher coefficient => more friction
 
+	// Technical constants
 	public const int InputBuffer = 6;                   // ticks; how early can an input be pressed and still register
 	public const int CoyoteTime = 6;                    // ticks; how long after leaving a platform the player can still jump
 	public const int InteractionLock = 20;              // ticks; how long to lock the player's movement when interacting with something
 	public const int WalljumpLock = 6;                  // ticks; ** when walljumping
 	public const int UpdatesPerSecond = 60;
 
+	// other technical shit
 	int movementLock = 0;           // ticks; used for preventing player movement for a set time
 	//string movementState = "standing";
 	//Array movementStates = [""];
@@ -38,19 +42,36 @@ public partial class Player : CharacterBody2D
 	int airTime = 0;                // ticks; how long has the character spent in the air
 	int jumpBuffer = 0;             // ticks; is a jump action buffered and how much time is left
 	int kickBuffer = 0;             // ticks; is a kick action buffered and how much time is left
-	float facing = 1.0f;            // 1 = right, -1 = left
-	Vector2 gravityAcceleration = new Vector2(0.0f, 980.0f / 60.0f);    // ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
+	float facing = 1f;              // 1 = right, -1 = left
+	Vector2 gravityAcceleration = new Vector2(0f, 980f / 60f);      // ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
+																								// (divided by 60 to get u/t^2 instead of u/s^2) // wait shouldn't it be 60^2 ?
+
+	// Node aliases so I don't go insane
+	AnimatedSprite2D PlayerSprite;
+	CollisionShape2D InteractionCollider;
+	Area2D WalljumpDetector;
+	TileMapLayer Ground;
+	AnimatedSprite2D WalljumpDebugIndicator;
+	AudioStreamPlayer JumpSFX;
 
 
 	private void setAnimation(string animation)
 	{
-		GetNode<AnimatedSprite2D>("AnimatedSprite2D").Play(animation);
+		PlayerSprite.Play(animation);
 	}
 
 	public override void _Ready()
 	{
 		GD.Print("LOADED Player.cs");
 		//gravityAcceleration = GetGravity() / UpdatesPerSecond;
+
+		// Populate node aliases
+		PlayerSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		InteractionCollider = GetNode<CollisionShape2D>("InteractionTrigger/Collider");
+		WalljumpDetector = GetNode<Area2D>("WalljumpDetector");
+		Ground = GetNode<TileMapLayer>("../Terrain/Ground");
+		WalljumpDebugIndicator = GetNode<AnimatedSprite2D>("WalljumpDetector/Collider/DebugIndicator");
+		JumpSFX = GetNode<AudioStreamPlayer>("JumpSfx");
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -83,6 +104,14 @@ public partial class Player : CharacterBody2D
 				kickBuffer = InputBuffer;
 			}
 		}
+		if (isKicking)
+		{
+			InteractionCollider.Disabled = false;
+		}
+		else
+		{
+			InteractionCollider.Disabled = true;
+		}
 
 
 		// Handle Directional Colliders
@@ -103,21 +132,21 @@ public partial class Player : CharacterBody2D
 			facing = -1f;
 		}
 		// there's probably a better way, but this was convenient (as in, flipping the parent node)
-		GetNode<Area2D>("WalljumpDetector").Scale = new Vector2(facing, 1f);
+		WalljumpDetector.Scale = new Vector2(facing, 1f);
 
 
 		// Check for walljumping
 		canWalljump = false;
-		if (GetNode<Area2D>("WalljumpDetector").OverlapsBody(GetNode<TileMapLayer>("../Terrain/Ground")))
+		if (WalljumpDetector.OverlapsBody(Ground))
 		{
 			// Touching wall
 			if (isGrounded)
 			{
-				GetNode<AnimatedSprite2D>("WalljumpDetector/Collider/DebugIndicator").Play("not_in_air");
+				WalljumpDebugIndicator.Play("not_in_air");
 			}
 			else
 			{
-				GetNode<AnimatedSprite2D>("WalljumpDetector/Collider/DebugIndicator").Play("valid");
+				WalljumpDebugIndicator.Play("valid");
 				canWalljump = true;
 			}
 
@@ -125,7 +154,7 @@ public partial class Player : CharacterBody2D
 		else
 		{
 			// Not touching wall
-			GetNode<AnimatedSprite2D>("WalljumpDetector/Collider/DebugIndicator").Play("no_wall");
+			WalljumpDebugIndicator.Play("no_wall");
 		}
 
 
@@ -138,8 +167,8 @@ public partial class Player : CharacterBody2D
 				jumpBuffer = 0;
 				airTime += CoyoteTime + 1; // to prevent jumping several times at once
 				velocity.Y = -JumpMomentum / Mass;
-				GetNode<AudioStreamPlayer>("JumpSfx").PitchScale = 1f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
-				GetNode<AudioStreamPlayer>("JumpSfx").Play();
+				JumpSFX.PitchScale = 1f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
+				JumpSFX.Play();
 			}
 			else if (canWalljump && movementLock <= 0)
 			{
@@ -276,11 +305,11 @@ public partial class Player : CharacterBody2D
 			// Handling sprite facing; facing == 1f is right
 			if (facing == -1f)
 			{
-				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = true;
+				PlayerSprite.FlipH = true;
 			}
 			else if (facing == 1f)
 			{
-				GetNode<AnimatedSprite2D>("AnimatedSprite2D").FlipH = false;
+				PlayerSprite.FlipH = false;
 			}
 		}
 		else
@@ -310,7 +339,7 @@ public partial class Player : CharacterBody2D
 			isKicking = false;
 		}
 
-
+		
 		GetNode<Label>("../HUD/PositionDisplay").Text = "Position:\n    x: " + Position.X.ToString() + "\n    y: " + Position.Y.ToString();
 		GetNode<Label>("../HUD/VelocityDisplay").Text = "Velocity:\n    x: " + Velocity.X.ToString() + "\n    y: " + Velocity.Y.ToString();
 
