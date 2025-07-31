@@ -15,10 +15,10 @@ public partial class Player : CharacterBody2D
 	public const float Mass = 40.0f;                    // kilograms;
 	public const float AccelerationForce = 800.0f;      // kg*u / t^2; magnitude of the force applied when the player is accelerating
 	public const float JumpMomentum = 11200.0f;         // kg*u / t; magnitude of the momentum (mass*velocity) applied to the player when jumping
-	public const float AirControlFactor = 0.5f;         // the PCs acceleration is multiplied by this in the air
+	public const float AirControlFactor = 1f;         // the PCs acceleration is multiplied by this in the air
 
 	public const float DefaultStaticFrictionCoefficient = 0.6f;     // determines friction when walking; higher coefficient => more friction
-	public const float DefaultDynamicFrictionCoefficient = 0.3f;    // determines friction when running; higher coefficient => more friction
+	public const float DefaultDynamicFrictionCoefficient = 0.2f;    // determines friction when running; higher coefficient => more friction
 
 	public const int InputBuffer = 6;                   // ticks; how early can an input be pressed and still register
 	public const int CoyoteTime = 6;                    // ticks; how long after leaving a platform the player can still jump
@@ -180,7 +180,7 @@ public partial class Player : CharacterBody2D
 		
 		// direction moved under "Handle Directional Colliders"
 
-		float targetVelocity = 0f;
+		// maybe move them into the if statement, since I only need one at a time?
 		float dynamicFriction = gravityAcceleration.Y * DefaultDynamicFrictionCoefficient * -Mathf.Sign(velocity.X);
 		float staticFriction = gravityAcceleration.Y * DefaultStaticFrictionCoefficient * -Mathf.Sign(velocity.X); // yeah I know static friction works differently
 
@@ -188,32 +188,30 @@ public partial class Player : CharacterBody2D
 		// No friction in the air
 		if (velocity.X != 0f && isGrounded)
 		{
-			if (Mathf.Abs(staticFriction) >= Mathf.Abs(velocity.X))
+			if (atWalkingSpeed)
+			{
+				// Faster slowdown when walking
+				friction = staticFriction;
+			}
+			else
+			{
+				friction = dynamicFriction;
+			}
+
+			if (Mathf.Abs(friction) >= Mathf.Abs(velocity.X))
 			{
 				// to not overshoot and accidentally accelerate the other way
 				friction = -velocity.X;
 			}
-			else
-			{
-				if (atWalkingSpeed)
-				{
-					// Faster slowdown when walking
-					friction = staticFriction;
-				}
-				else
-				{
-					friction = dynamicFriction;
-				}
-			}
 		}
 
+		float targetVelocity = 0f;
 		if (direction == 0f)
 		{
 			velocity.X += friction;
 		}
 		else
 		{
-
 			if (isRunning)
 			{
 				targetVelocity = direction * RunningSpeed;
@@ -247,7 +245,7 @@ public partial class Player : CharacterBody2D
 					acceleration *= 0.5f * (1f - Mathf.Cos(Mathf.Pi * (targetVelocity - velocity.X) / (0.2f * targetVelocity)));
 					// TODO: revisit accel curve so momentum matters more
 				}
-				else if (!directionAlignedWithVelocity)
+				else if (!directionAlignedWithVelocity && atWalkingSpeed)
 				{
 					// slow down faster when switching direction (only on ground bc air friction == 0)
 					acceleration += friction;
