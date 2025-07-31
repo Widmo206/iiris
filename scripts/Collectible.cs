@@ -6,7 +6,7 @@ public partial class Collectible : Area2D
 {
 	public override void _Ready()
 	{
-		GD.Print("LOADED Collectible.cs");
+		//GD.Print("LOADED Collectible.cs");
 		// this.Connect("CoinCollected", GetNode<Node2D>("Level"), "OnCoinCollected");
 	}
 
@@ -15,7 +15,7 @@ public partial class Collectible : Area2D
 
 	public void OnBodyEntered(Node2D collidingEntity)
 	{
-		GD.Print("Detected Player!");
+		//GD.Print("Detected Player!");
 
 		// TODO: update this when global.gd gets rewritten
 		int coinsCollected = (int)GetNode("/root/Global").Get("coinsCollected");

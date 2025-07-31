@@ -30,8 +30,8 @@ animations = [{
 }]
 
 [node name="Collectible" type="Area2D"]
-collision_layer = 4
-collision_mask = 4
+collision_layer = 0
+collision_mask = 2
 script = ExtResource("1_cow24")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

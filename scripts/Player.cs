@@ -62,7 +62,7 @@ public partial class Player : CharacterBody2D
 
 	public override void _Ready()
 	{
-		GD.Print("LOADED Player.cs");
+		//GD.Print("LOADED Player.cs");
 		//gravityAcceleration = GetGravity() / UpdatesPerSecond;
 
 		// Populate node aliases
@@ -159,14 +159,16 @@ public partial class Player : CharacterBody2D
 
 
 		// Handle Jump and Walljump
+		// TODO: make jump stronger/weaker based on how long the key is held (jump on rising or falling edge?)
 		var rand = new Random();
 		if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
 		{
+			float JumpVelocity = -JumpMomentum / Mass;
 			if ((isGrounded || airTime < CoyoteTime) && movementLock <= 0)
 			{
 				jumpBuffer = 0;
 				airTime += CoyoteTime + 1; // to prevent jumping several times at once
-				velocity.Y = -JumpMomentum / Mass;
+				velocity.Y = JumpVelocity;
 				JumpSFX.PitchScale = 1f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
 				JumpSFX.Play();
 			}
@@ -176,8 +178,9 @@ public partial class Player : CharacterBody2D
 				movementLock = WalljumpLock;
 				// GD.Print("Walljumpng!");
 				// velocity.X *= -0.5f;
-				velocity.Y += -JumpMomentum / Mass / Mathf.Sqrt2;
-				velocity.X += -facing * JumpMomentum / Mass / Mathf.Sqrt2;
+				// Another Desmos equation; 
+				velocity.Y += (1 + Mathf.Atan(velocity.Y * 0.01f) * 2 / Mathf.Pi) * JumpVelocity / Mathf.Sqrt2;
+				velocity.X += facing * JumpVelocity / Mathf.Sqrt2;
 				facing *= -1f; // TIL the decimal point isn't required
 			}
 			else if (jumpBuffer <= 0)

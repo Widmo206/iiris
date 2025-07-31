@@ -7,8 +7,8 @@ public partial class Global : Node
 	
 	public override void _Ready()
 	{
-		GD.Print("LOADED Global.cs");
-		GD.Print("Coins collected:", coinsCollected);
+		//GD.Print("LOADED Global.cs");
+		//GD.Print("Coins collected:", coinsCollected);
 	}
 
 	public override void _Input(InputEvent @event)
