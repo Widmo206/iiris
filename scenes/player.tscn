@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://dv16mjenwd7rn"]
+[gd_scene load_steps=40 format=3 uid="uid://dv16mjenwd7rn"]
 
 [ext_resource type="Script" uid="uid://d5ha03kt30lg" path="res://scripts/Player.cs" id="1_8tq0c"]
 [ext_resource type="Texture2D" uid="uid://cjp6353do2nsq" path="res://sprites/DinoSprites - vita.png" id="2_fuuox"]
@@ -6,6 +6,18 @@
 [ext_resource type="Texture2D" uid="uid://cbkg5jrkylnnh" path="res://sprites/red.png" id="4_qlg0r"]
 [ext_resource type="Texture2D" uid="uid://cppkphee80t0a" path="res://sprites/yellow.png" id="5_fjrip"]
 [ext_resource type="Texture2D" uid="uid://chnjkh0df10o2" path="res://sprites/green.png" id="5_tuyoq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tuyoq"]
+atlas = ExtResource("2_fuuox")
+region = Rect2(408, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ur7pv"]
+atlas = ExtResource("2_fuuox")
+region = Rect2(168, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y4r1p"]
+atlas = ExtResource("2_fuuox")
+region = Rect2(192, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bw6ai"]
 atlas = ExtResource("2_fuuox")
@@ -35,9 +47,13 @@ region = Rect2(48, 0, 24, 24)
 atlas = ExtResource("2_fuuox")
 region = Rect2(72, 0, 24, 24)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fqonl"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_fjrip"]
 atlas = ExtResource("2_fuuox")
-region = Rect2(168, 0, 24, 24)
+region = Rect2(240, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_smehm"]
+atlas = ExtResource("2_fuuox")
+region = Rect2(288, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_s8jae"]
 atlas = ExtResource("2_fuuox")
@@ -103,6 +119,25 @@ region = Rect2(96, 0, 24, 24)
 animations = [{
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_tuyoq")
+}],
+"loop": true,
+"name": &"crouched",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_ur7pv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y4r1p")
+}],
+"loop": false,
+"name": &"fall",
+"speed": 6.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_bw6ai")
 }, {
 "duration": 1.0,
@@ -134,7 +169,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fqonl")
+"texture": SubResource("AtlasTexture_fjrip")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_smehm")
 }],
 "loop": false,
 "name": &"jump",
@@ -174,7 +212,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_l4nff")
 }],
 "loop": true,
-"name": &"run",
+"name": &"sneak",
 "speed": 12.0
 }, {
 "frames": [{
@@ -203,7 +241,11 @@ animations = [{
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_jogtl"]
 radius = 6.0
-height = 14.0
+height = 16.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_tuyoq"]
+radius = 6.0
+height = 12.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qhqgy"]
 size = Vector2(2, 2)
@@ -243,15 +285,18 @@ collision_layer = 3
 script = ExtResource("1_8tq0c")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, -8)
+position = Vector2(0, -9)
 sprite_frames = SubResource("SpriteFrames_s204s")
-animation = &"kick"
-frame = 2
-frame_progress = 1.0
+animation = &"jump"
 
-[node name="PhysicsCollider" type="CollisionShape2D" parent="."]
-position = Vector2(0, -7)
+[node name="StandingCollider" type="CollisionShape2D" parent="."]
+position = Vector2(0, -8)
 shape = SubResource("CapsuleShape2D_jogtl")
+
+[node name="LayingCollider" type="CollisionShape2D" parent="."]
+position = Vector2(0, -6)
+shape = SubResource("CapsuleShape2D_tuyoq")
+disabled = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
 visible = false
@@ -268,7 +313,7 @@ stream = ExtResource("3_gamhb")
 collision_layer = 0
 
 [node name="Collider" type="CollisionShape2D" parent="WalljumpDetector"]
-position = Vector2(6, -7)
+position = Vector2(6, -8)
 scale = Vector2(1, 2)
 shape = SubResource("RectangleShape2D_qhqgy")
 debug_color = Color(0, 0.8, 1, 0.419608)
@@ -283,7 +328,7 @@ collision_layer = 4
 collision_mask = 0
 
 [node name="Collider" type="CollisionShape2D" parent="InteractionTrigger"]
-position = Vector2(0, -7)
+position = Vector2(0, -8)
 shape = SubResource("RectangleShape2D_tuyoq")
 disabled = true
 debug_color = Color(0.501073, 0.580938, 3.85046e-07, 0.42)

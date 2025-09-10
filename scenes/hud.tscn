@@ -25,6 +25,15 @@ text = "Velocity:
     x: 0.0
     y: 0.0"
 
+[node name="StateDisplay" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 202.0
+offset_right = 74.0
+offset_bottom = 229.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "State: Idle
+stateLockCountdown: 0"
+
 [node name="CurrentLevel" type="Label" parent="."]
 offset_left = 8.0
 offset_right = 62.0
