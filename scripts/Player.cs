@@ -19,12 +19,12 @@ public partial class Player : CharacterBody2D
 	//public const float MaxRunningSpeed = 350.0f;        // units/second; the highest speed at which the PC will be considered as running
 
 	public const float Mass = 40.0f;                    // kilograms;
-	public const float AccelerationForce = 800.0f;      // kg*u / (s*t); magnitude of the force applied when the player is accelerating
+	public const float AccelerationForce = 600.0f;      // kg*u / (s*t); magnitude of the force applied when the player is accelerating
 	                                                    // (yes, I'm mixing time units; velocities are in u/s, but acceleration is applied each tick)
 	public const float JumpMomentum = 11200.0f;         // kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
-	public const float AirControlFactor = 1f;           // the PCs acceleration is multiplied by this in the air
+	public const float AirControlFactor = 0.5f;         // the PCs acceleration is multiplied by this in the air
 
-	public const float DefaultStaticFrictionCoefficient = 0.6f;     // determines friction when walking; higher coefficient => more friction
+	public const float DefaultStaticFrictionCoefficient = 1f;       // determines friction when walking; higher coefficient => more friction
 	public const float DefaultDynamicFrictionCoefficient = 0.2f;    // determines friction when running; higher coefficient => more friction
 
 	// Technical constants
@@ -32,10 +32,9 @@ public partial class Player : CharacterBody2D
 	public const int CoyoteTime = 6;                    // ticks; how long after leaving a platform the player can still jump
 	public const int InteractionLock = 20;              // ticks; how long to lock the player's movement when interacting with something
 	public const int WalljumpLock = 6;                  // ticks; ** when walljumping
-	public const int UpdatesPerSecond = 60;
+	public int UpdatesPerSecond = Engine.PhysicsTicksPerSecond;		// 60 t/s
 
 	// other technical shit
-	int movementLock = 0;	// ticks; used for preventing player movement for a set time
 	enum State				// does this count as a constant?
 	{
 		// stationary
@@ -52,12 +51,9 @@ public partial class Player : CharacterBody2D
 		Kicking,
 	}
 	State currentState = State.Idle;        // the player's current state
-	int stateLockCountdown = 0;             // ticks; how long until the state can be changed
+	int stateLockCountdown = 0;             // ticks; how long until the state can be changed again
+	int movementLock = 0;					// ticks; used for preventing player movement for a set time
 
-	bool isRunning = false;
-	bool atRunningSpeed = false;
-	bool atWalkingSpeed = false;
-	bool isKicking = false;
 	bool isGrounded = false;
 	bool canWalljump = false;
 	int airTime = 0;						// ticks; how long has the character spent in the air
@@ -194,14 +190,21 @@ public partial class Player : CharacterBody2D
 		var rand = new Random();
 		if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
 		{
-			float JumpVelocity = -JumpMomentum / Mass;
+			float JumpVelocity = JumpMomentum / Mass;
 			if ((isGrounded || airTime < CoyoteTime) && stateLockCountdown <= 0 && currentState != State.Jumping)
 			{
+				// Jumping
 				jumpBuffer = 0;
 				// should be unnecessary due to currentState
 				//airTime += CoyoteTime + 1; // to prevent jumping several times at once
-				velocity.Y = JumpVelocity;
-				currentState = State.Jumping;
+				velocity.Y = -JumpVelocity;
+				if (inputDirection != 0)
+				{
+					// Exponential decay of horizontal velocity to prevent bunnyhopping
+					velocity.X += JumpVelocity * inputDirection * 0.5f * Mathf.Pow(2f, -Mathf.Pow(velocity.X, 2f)/120f);
+				}
+
+					currentState = State.Jumping;
 				isGrounded = false;
 				// TODO: move SFX to a separate function
 				JumpSFX.PitchScale = 1f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
@@ -209,14 +212,14 @@ public partial class Player : CharacterBody2D
 			}
 			else if (canWalljump && movementLock <= 0)
 			{
+				// Walljumping
 				jumpBuffer = 0;
 				currentState = State.Walljumping;
 				stateLockCountdown = WalljumpLock;
-				// GD.Print("Walljumpng!");
 				// velocity.X *= -0.5f;
 				// Another Desmos equation; 
-				velocity.Y += (1 + Mathf.Atan(velocity.Y * 0.01f) * 2 / Mathf.Pi) * JumpVelocity / Mathf.Sqrt2;
-				velocity.X += facingDirection * JumpVelocity / Mathf.Sqrt2;
+				velocity.Y += (1 + Mathf.Atan(velocity.Y * 0.01f) * 2 / Mathf.Pi) * -JumpVelocity / Mathf.Sqrt2;
+				velocity.X += facingDirection * -JumpVelocity / Mathf.Sqrt2;
 				facingDirection *= -1f; // TIL the decimal point isn't required
 			}
 			else if (Input.IsActionJustPressed("jump"))	// checking again so buffer is only updated on button press
@@ -331,7 +334,7 @@ public partial class Player : CharacterBody2D
 				break;
 
 			case State.Kicking:
-				setAnimation("kicking");
+				setAnimation("kick");
 				break;
 
 			case State.Walking:
@@ -382,11 +385,6 @@ public partial class Player : CharacterBody2D
 		{
 			stateLockCountdown--;
 		}
-		else
-		{
-			isKicking = false;
-		}
-
 		
 		GetNode<Label>("../HUD/PositionDisplay").Text = $"Position:\n    x: {Position.X}\n    y: {Position.Y}";
 		GetNode<Label>("../HUD/VelocityDisplay").Text = $"Velocity:\n    x: {Velocity.X}\n    y: {Velocity.Y}";
