@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://dv16mjenwd7rn"]
+[gd_scene load_steps=41 format=3 uid="uid://dv16mjenwd7rn"]
 
 [ext_resource type="Script" uid="uid://d5ha03kt30lg" path="res://scripts/Player.cs" id="1_8tq0c"]
 [ext_resource type="Texture2D" uid="uid://cjp6353do2nsq" path="res://sprites/DinoSprites - vita.png" id="2_fuuox"]
@@ -10,6 +10,10 @@
 [sub_resource type="AtlasTexture" id="AtlasTexture_tuyoq"]
 atlas = ExtResource("2_fuuox")
 region = Rect2(408, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d2wvv"]
+atlas = ExtResource("2_fuuox")
+region = Rect2(504, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ur7pv"]
 atlas = ExtResource("2_fuuox")
@@ -123,6 +127,14 @@ animations = [{
 }],
 "loop": true,
 "name": &"crouched",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d2wvv")
+}],
+"loop": true,
+"name": &"dash",
 "speed": 5.0
 }, {
 "frames": [{
@@ -287,7 +299,7 @@ script = ExtResource("1_8tq0c")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -9)
 sprite_frames = SubResource("SpriteFrames_s204s")
-animation = &"jump"
+animation = &"dash"
 
 [node name="StandingCollider" type="CollisionShape2D" parent="."]
 position = Vector2(0, -8)

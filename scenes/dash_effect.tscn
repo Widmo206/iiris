@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://dp8ap0dl6xhmf"]
+
+[ext_resource type="Script" uid="uid://bir7be5pjjj47" path="res://scripts/DashEffect.cs" id="1_reoje"]
+[ext_resource type="Texture2D" uid="uid://cjp6353do2nsq" path="res://sprites/DinoSprites - vita.png" id="2_fj86a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j4jso"]
+atlas = ExtResource("2_fj86a")
+
+[node name="DashEffect" type="Node2D"]
+script = ExtResource("1_reoje")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+position = Vector2(0, -12)
+texture = SubResource("AtlasTexture_j4jso")
+hframes = 25
+frame = 24
