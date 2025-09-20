@@ -1,5 +1,6 @@
 ﻿using Godot;
 using System;
+using System.Diagnostics.Metrics;
 using System.Text.RegularExpressions;
 
 // I have no idea what I'm doing
@@ -23,19 +24,20 @@ public partial class Player : CharacterBody2D
 																	// (yes, I'm mixing time units; velocities are in u/s, but acceleration is applied each tick)
 	public const float JumpMomentum = 11200.0f;						// kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
 	public const float AirControlFactor = 0.5f;                     // the PCs horizontal acceleration is multiplied by this in the air
-	public const float DashSpeed = 300f;							// u / s; dash speed is independent of mass
+	public const float DashSpeed = 400f;                            // u / s; dash speed is independent of mass
 
 	public const float DefaultStaticFrictionCoefficient = 1f;       // determines friction most of the time; higher coefficient => more friction
 	public const float DefaultDynamicFrictionCoefficient = 0.2f;    // determines friction when sliding; higher coefficient => more friction
 
 	// Technical constants
+	public const int DashDuration = 15;                             // ticks; what it says on the tin
+	public const int DashCooldown = 6;                              // ticks; how long to wait before allowing the player to dash again
 	public const int DashEffectPeriod = 6;							// ticks; how long to wait between successive instances of DashEffect
 	public const int InputBuffer = 6;								// ticks; how early can an input be pressed and still register
 	public const int CoyoteTime = 6;								// ticks; how long after leaving a platform the player can still jump
 	public const int InteractionLock = 20;							// ticks; how long to lock the player's movement when interacting with something
 	public const int WalljumpLock = 6;								// ticks;                                     ** when walljumping
-	public int UpdatesPerSecond = Engine.PhysicsTicksPerSecond;     // 60 t/s; not *technically* a constant but really it is
-																	// should I replace it with a proper constant? the value isn't gonna change anyway...
+	public const int UpdatesPerSecond = 60;							// ticks/second;
 
 	// other technical shit
 	Vector2 gravityAcceleration = new Vector2(0f, 980f / 60f);      // ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
@@ -61,12 +63,14 @@ public partial class Player : CharacterBody2D
 	int stateLockCountdown = 0;             // ticks; how long until the state can be changed again
 	int movementLock = 0;                   // ticks; used for preventing player movement for a set time
 	int dashEffectCounter = 0;              // ticks; how long until a new dash effect "particle" can be spawned
+	int dashCounter = 0;                    // ticks; how long since we started dashing
 
 	bool isGrounded = false;
 	bool canWalljump = false;
 	int airTime = 0;						// ticks; how long has the character spent in the air
 	int jumpBuffer = 0;						// ticks; is a jump action buffered and how much time is left
-	int kickBuffer = 0;						// ticks; is a kick action buffered and how much time is left
+	int kickBuffer = 0;                     // ticks; is a kick action buffered and how much time is left
+	int dashBuffer = 0;                     // ticks; is a dash action buffered and how much time is left
 	float facingDirection = 1f;				// 1 = right, -1 = left
 
 
@@ -117,6 +121,13 @@ public partial class Player : CharacterBody2D
 	{
 		Vector2 velocity = Velocity;
 		isGrounded = IsOnFloor();
+
+		// Handle dash expiring (at the beginning, so it doesn't break shit)
+		// checking for lower-than-expected velocity to prevent getting stuck on walls
+		if (currentState == State.Dashing &&  (dashCounter <= 0 || (float)velocity.Length() < 0.75*DashSpeed)) {
+			currentState = State.Falling;
+			dashCounter = -DashCooldown;
+		}
 		
 
 		// Gravity
@@ -138,9 +149,11 @@ public partial class Player : CharacterBody2D
 			airTime += 1;
 			if (velocity.Y > 0) // -y is down
 			{
+				// GD.Print(currentState);
 				currentState = State.Falling;
 			}
 		}
+
 
 		// Handle Interaction
 		if (Input.IsActionJustPressed("interact") || kickBuffer > 0) {
@@ -183,7 +196,6 @@ public partial class Player : CharacterBody2D
 			// Facing left
 			facingDirection = -1f;
 		}
-
 		// there's probably a better way, but this was convenient (as in, flipping the parent node)
 		WalljumpDetector.Scale = new Vector2(facingDirection, 1f);
 
@@ -212,11 +224,23 @@ public partial class Player : CharacterBody2D
 
 
 		// Handle Dash
-		if (Input.IsActionJustPressed("dash") && inputDirection != 0f)
+		// dash expiring is checked at the beginning, so you can potentially start a new dash in the same tick
+		if (Input.IsActionJustPressed("dash") && inputDirection != 0f || dashBuffer > 0)
 		{
-			currentState = State.Dashing;
-			velocity.X = inputDirection * DashSpeed;
-			isGrounded = false;
+			if (dashCounter == 0)
+			{
+				currentState = State.Dashing;
+				dashCounter = DashDuration;
+				velocity = new Vector2(inputDirection * DashSpeed, 0f);
+				isGrounded = false;
+			}
+			else if (Input.IsActionJustPressed("dash"))
+			{
+				// checking the input again to only buffer if we're jumping due to input
+				// results in chain-buffering otherwise
+				dashBuffer = InputBuffer;
+			}
+			
 		}
 
 
@@ -401,6 +425,7 @@ public partial class Player : CharacterBody2D
 				break;
 		}
 
+
 		// Handling sprite facing; facing == 1f is right
 		if (facingDirection == -1f)
 		{
@@ -411,7 +436,8 @@ public partial class Player : CharacterBody2D
 			PlayerSprite.FlipH = false;
 		}
 
-		// Variable management
+
+		// Frame-counter management
 		if (jumpBuffer > 0)
 		{
 			jumpBuffer--;
@@ -428,7 +454,19 @@ public partial class Player : CharacterBody2D
 		{
 			dashEffectCounter--;
 		}
+		if (dashCounter > 0)
+		{
+			dashCounter--;
+		}else if (dashCounter < 0)
+		{
+			dashCounter++;
+		}
+		if (dashBuffer > 0)
+		{
+			dashBuffer--;
+		}
 
+		// update debug overlay
 		GetNode<Label>("../HUD/PositionDisplay").Text = $"Position:\n    x: {Position.X}\n    y: {Position.Y}";
 		GetNode<Label>("../HUD/VelocityDisplay").Text = $"Velocity:\n    x: {Velocity.X}\n    y: {Velocity.Y}";
 		GetNode<Label>("../HUD/StateDisplay").Text = $"State: {currentState}\nstateLockCountdown: {stateLockCountdown.ToString()}\njumpBuffer: {jumpBuffer}\nkickBuffer: {kickBuffer}";
