@@ -22,7 +22,7 @@ public partial class Player : CharacterBody2D
 	public const float Mass = 40.0f;								// kilograms; the PC's mass, without any carried items (TBA)
 	public const float AccelerationForce = 600.0f;					// kg*u / (s*t); magnitude of the force applied when the player is accelerating
 																	// (yes, I'm mixing time units; velocities are in u/s, but acceleration is applied each tick)
-	public const float JumpMomentum = 11200.0f;						// kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
+	public const float JumpMomentum = 12000.0f;						// kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
 	public const float AirControlFactor = 0.5f;                     // the PCs horizontal acceleration is multiplied by this in the air
 	public const float DashSpeed = 400f;                            // u / s; dash speed is independent of mass
 
@@ -36,7 +36,7 @@ public partial class Player : CharacterBody2D
 	public const int InputBuffer = 6;								// ticks; how early can an input be pressed and still register
 	public const int CoyoteTime = 6;								// ticks; how long after leaving a platform the player can still jump
 	public const int InteractionLock = 20;							// ticks; how long to lock the player's movement when interacting with something
-	public const int WalljumpLock = 6;								// ticks;                                     ** when walljumping
+	public const int WalljumpLock = 0;								// ticks;                                     ** when walljumping
 	public const int UpdatesPerSecond = 60;							// ticks/second;
 
 	// other technical shit
@@ -61,26 +61,25 @@ public partial class Player : CharacterBody2D
 	}
 	State currentState = State.Idle;        // the player's current state
 	int stateLockCountdown = 0;             // ticks; how long until the state can be changed again
-	int movementLock = 0;                   // ticks; used for preventing player movement for a set time
+	// int movementLock = 0;                   // ticks; used for preventing player movement for a set time
 	int dashEffectCounter = 0;              // ticks; how long until a new dash effect "particle" can be spawned
 	int dashCounter = 0;                    // ticks; how long since we started dashing
 
-	bool isGrounded = false;
+	public bool isGrounded = false;
 	bool canWalljump = false;
 	int airTime = 0;						// ticks; how long has the character spent in the air
 	int jumpBuffer = 0;						// ticks; is a jump action buffered and how much time is left
 	int kickBuffer = 0;                     // ticks; is a kick action buffered and how much time is left
 	int dashBuffer = 0;                     // ticks; is a dash action buffered and how much time is left
-	float facingDirection = 1f;				// 1 = right, -1 = left
+	int facingDirection = 1;				// 1 = right, -1 = left
 
 
 	// Node aliases so I don't go insane
 	Node2D RootScene;
 	AnimatedSprite2D PlayerSprite;
 	CollisionShape2D InteractionCollider;
-	Area2D WalljumpDetector;
+	WalljumpDetector WalljumpDetector;
 	TileMapLayer Ground;
-	AnimatedSprite2D WalljumpDebugIndicator;
 	AudioStreamPlayer JumpSFX;
 	PackedScene dashEffect;
 
@@ -109,9 +108,8 @@ public partial class Player : CharacterBody2D
 		RootScene = GetTree().Root.GetChild<Node2D>(1);		// grabs the current Level scene (there's probably a more elegant/robust way to do this)
 		PlayerSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		InteractionCollider = GetNode<CollisionShape2D>("InteractionTrigger/Collider");
-		WalljumpDetector = GetNode<Area2D>("WalljumpDetector");
+		WalljumpDetector = GetNode<WalljumpDetector>("WalljumpDetector");
 		Ground = RootScene.GetNode<TileMapLayer>("Terrain/Ground");
-		WalljumpDebugIndicator = GetNode<AnimatedSprite2D>("WalljumpDetector/Collider/DebugIndicator");
 		JumpSFX = GetNode<AudioStreamPlayer>("JumpSfx");
 
 		dashEffect = GD.Load<PackedScene>("res://scenes/dash_effect.tscn");
@@ -127,6 +125,7 @@ public partial class Player : CharacterBody2D
 		if (currentState == State.Dashing &&  (dashCounter <= 0 || (float)velocity.Length() < 0.75*DashSpeed)) {
 			currentState = State.Falling;
 			dashCounter = -DashCooldown;
+			stateLockCountdown = 0;
 		}
 		
 
@@ -147,7 +146,7 @@ public partial class Player : CharacterBody2D
 		{
 			velocity += gravityAcceleration;
 			airTime += 1;
-			if (velocity.Y > 0) // -y is down
+			if (velocity.Y > 0) // +y is down
 			{
 				// GD.Print(currentState);
 				currentState = State.Falling;
@@ -179,7 +178,7 @@ public partial class Player : CharacterBody2D
 		}
 
 
-		// Handle Directional Colliders
+		// Handle Directional Actions
 		float inputDirection = 0f;
 		if (stateLockCountdown <= 0)
 		{
@@ -189,37 +188,12 @@ public partial class Player : CharacterBody2D
 		if (inputDirection > 0f)
 		{
 			// Facing right
-			facingDirection = 1f;
+			facingDirection = 1;
 		}
 		else if (inputDirection < 0f)
 		{
 			// Facing left
-			facingDirection = -1f;
-		}
-		// there's probably a better way, but this was convenient (as in, flipping the parent node)
-		WalljumpDetector.Scale = new Vector2(facingDirection, 1f);
-
-
-		// Check for walljumping
-		canWalljump = false;
-		if (WalljumpDetector.OverlapsBody(Ground))
-		{
-			// Touching wall
-			if (isGrounded)
-			{
-				WalljumpDebugIndicator.Play("not_in_air");
-			}
-			else
-			{
-				WalljumpDebugIndicator.Play("valid");
-				canWalljump = true;
-			}
-
-		}
-		else
-		{
-			// Not touching wall
-			WalljumpDebugIndicator.Play("no_wall");
+			facingDirection = -1;
 		}
 
 
@@ -233,6 +207,7 @@ public partial class Player : CharacterBody2D
 				dashCounter = DashDuration;
 				velocity = new Vector2(inputDirection * DashSpeed, 0f);
 				isGrounded = false;
+				stateLockCountdown = DashDuration;
 			}
 			else if (Input.IsActionJustPressed("dash"))
 			{
@@ -245,10 +220,15 @@ public partial class Player : CharacterBody2D
 
 
 		// Handle Jump and Walljump
-		// TODO: make jump stronger/weaker based on how long the key is held (jump on rising or falling edge?)
+
+		// Check for walljumping
+		WalljumpDetector.CheckWalljump();
+		canWalljump = WalljumpDetector.canWalljump;
+		// TODO: make jump stronger/weaker based on how long the key is held (jump on rising or falling edge?) // falling edge: count up to some limit, then jump when released
 		if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
 		{
-			float JumpVelocity = JumpMomentum / Mass;
+			//GD.Print("traying to jump");
+			float JumpVelocity = JumpMomentum / Mass; 
 			if ((isGrounded || airTime < CoyoteTime) && stateLockCountdown <= 0 && currentState != State.Jumping)
 			{
 				// Jumping
@@ -256,11 +236,10 @@ public partial class Player : CharacterBody2D
 				// should be unnecessary due to currentState
 				//airTime += CoyoteTime + 1; // to prevent jumping several times at once
 				velocity.Y = -JumpVelocity;
-				if (inputDirection != 0)
-				{
-					// Exponential decay of horizontal velocity to prevent bunnyhopping
-					velocity.X += JumpVelocity * inputDirection * 0.5f * Mathf.Pow(2f, -Mathf.Pow(velocity.X, 2f)/120f);
-				}
+				
+				// Exponential decay of horizontal velocity to prevent bunnyhopping
+				velocity.X += JumpVelocity * inputDirection * 0.5f * Mathf.Pow(2f, -Mathf.Pow(velocity.X, 2f)/BaseSpeed);
+				
 
 					currentState = State.Jumping;
 				isGrounded = false;
@@ -268,17 +247,32 @@ public partial class Player : CharacterBody2D
 				JumpSFX.PitchScale = 1f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
 				JumpSFX.Play();
 			}
-			else if (canWalljump && movementLock <= 0)
+			else if (canWalljump && stateLockCountdown <= 0)
 			{
 				// Walljumping
+				int walljumpDirection;
+				if (WalljumpDetector.direction == WalljumpDetector.Direction.Left)
+				{
+					walljumpDirection = -1;
+				}
+				else if (WalljumpDetector.direction == WalljumpDetector.Direction.Right)
+				{
+					walljumpDirection = 1;
+				}
+				else
+				{
+					walljumpDirection = facingDirection;
+				}
+
+				//GD.Print("walljumping!!!");
 				jumpBuffer = 0;
 				currentState = State.Walljumping;
 				stateLockCountdown = WalljumpLock;
 				// velocity.X *= -0.5f;
 				// Another Desmos equation; 
 				velocity.Y += (1 + Mathf.Atan(velocity.Y * 0.01f) * 2 / Mathf.Pi) * -JumpVelocity / Mathf.Sqrt2;
-				velocity.X += facingDirection * -JumpVelocity / Mathf.Sqrt2;
-				facingDirection *= -1f; // TIL the decimal point isn't required
+				velocity.X += walljumpDirection * -JumpVelocity / Mathf.Sqrt2;
+				facingDirection = -walljumpDirection; // TIL the decimal point isn't required // that comment is out of place now because I changed this to an int
 			}
 			else if (Input.IsActionJustPressed("jump"))	// checking again so buffer is only updated on button press
 			{

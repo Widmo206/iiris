@@ -1,8 +1,9 @@
-[gd_scene load_steps=41 format=3 uid="uid://dv16mjenwd7rn"]
+[gd_scene load_steps=42 format=3 uid="uid://dv16mjenwd7rn"]
 
 [ext_resource type="Script" uid="uid://d5ha03kt30lg" path="res://scripts/Player.cs" id="1_8tq0c"]
 [ext_resource type="Texture2D" uid="uid://cjp6353do2nsq" path="res://sprites/DinoSprites - vita.png" id="2_fuuox"]
 [ext_resource type="AudioStream" uid="uid://y54u2g4dhcu6" path="res://sounds/jump.wav" id="3_gamhb"]
+[ext_resource type="Script" uid="uid://gywxlc0y80d3" path="res://scripts/WalljumpDetector.cs" id="4_fjrip"]
 [ext_resource type="Texture2D" uid="uid://cbkg5jrkylnnh" path="res://sprites/red.png" id="4_qlg0r"]
 [ext_resource type="Texture2D" uid="uid://cppkphee80t0a" path="res://sprites/yellow.png" id="5_fjrip"]
 [ext_resource type="Texture2D" uid="uid://chnjkh0df10o2" path="res://sprites/green.png" id="5_tuyoq"]
@@ -321,16 +322,37 @@ drag_vertical_enabled = true
 [node name="JumpSfx" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_gamhb")
 
-[node name="WalljumpDetector" type="Area2D" parent="."]
+[node name="WalljumpDetector" type="Node2D" parent="."]
+script = ExtResource("4_fjrip")
+
+[node name="Left" type="Area2D" parent="WalljumpDetector"]
+rotation = -3.14159
+scale = Vector2(1, -1)
 collision_layer = 0
 
-[node name="Collider" type="CollisionShape2D" parent="WalljumpDetector"]
+[node name="Collider" type="CollisionShape2D" parent="WalljumpDetector/Left"]
+modulate = Color(1, 1, 1, 0.498039)
 position = Vector2(6, -8)
-scale = Vector2(1, 2)
+scale = Vector2(1, 5)
 shape = SubResource("RectangleShape2D_qhqgy")
 debug_color = Color(0, 0.8, 1, 0.419608)
 
-[node name="DebugIndicator" type="AnimatedSprite2D" parent="WalljumpDetector/Collider"]
+[node name="DebugIndicator" type="AnimatedSprite2D" parent="WalljumpDetector/Left/Collider"]
+scale = Vector2(0.063, 0.063)
+sprite_frames = SubResource("SpriteFrames_fjrip")
+animation = &"no_wall"
+
+[node name="Right" type="Area2D" parent="WalljumpDetector"]
+collision_layer = 0
+
+[node name="Collider" type="CollisionShape2D" parent="WalljumpDetector/Right"]
+modulate = Color(1, 1, 1, 0.498039)
+position = Vector2(6, -8)
+scale = Vector2(1, 5)
+shape = SubResource("RectangleShape2D_qhqgy")
+debug_color = Color(0, 0.8, 1, 0.419608)
+
+[node name="DebugIndicator" type="AnimatedSprite2D" parent="WalljumpDetector/Right/Collider"]
 scale = Vector2(0.063, 0.063)
 sprite_frames = SubResource("SpriteFrames_fjrip")
 animation = &"no_wall"
