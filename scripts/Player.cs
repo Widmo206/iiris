@@ -9,41 +9,38 @@ using System.Text.RegularExpressions;
 public partial class Player : CharacterBody2D
 {
 	// Physics constants
-	public const float BaseSpeed = 250f;							// units/second; how fast the player walks
-	public const float CrouchSpeed = 125f;                          // units/second; how fast the player walks while crouched
+	public const float BaseSpeed				= 250f;				// units/second; how fast the player walks
+	public const float CrouchSpeed				= 250f;				// units/second; how fast the player walks while crouched
 
-	// not needed due to the state machine
-	//public const float MinWalkingSpeed = 10.0f;         // units/second; the lowest speed at which the Player will render with a walking animation
-	//public const float WalkingSpeed = 125.0f;           // units/second; the speed at which the PC will attempt to walk
-	//public const float MaxWalkingSpeed = 150.0f;        // units/second; the highest speed at which the PC will be considered as walking
-	//public const float RunningSpeed = 250.0f;           // units/second; the speed at which the PC will attempt to run
-	//public const float MaxRunningSpeed = 350.0f;        // units/second; the highest speed at which the PC will be considered as running
-
-	public const float Mass = 40.0f;								// kilograms; the PC's mass, without any carried items (TBA)
-	public const float AccelerationForce = 600.0f;					// kg*u / (s*t); magnitude of the force applied when the player is accelerating
+	public const float Mass						= 40f;				// kilograms; the PC's mass, without any carried items (TBA)
+	public const float AccelerationForce		= 600f;				// kg*u / (s*t); magnitude of the force applied when the player is accelerating
 																	// (yes, I'm mixing time units; velocities are in u/s, but acceleration is applied each tick)
-	public const float JumpMomentum = 12000.0f;						// kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
-	public const float AirControlFactor = 0.5f;                     // the PCs horizontal acceleration is multiplied by this in the air
-	public const float DashSpeed = 400f;                            // u / s; dash speed is independent of mass
+	public const float JumpMomentum				= 12000f;			// kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
+	public const float AirControlFactor			= 0.5f;				// the PCs horizontal acceleration is multiplied by this in the air
+	public const float DashSpeed				= 400f;				// u / s; dash speed is independent of mass
 
-	public const float DefaultStaticFrictionCoefficient = 1f;       // determines friction most of the time; higher coefficient => more friction
-	public const float DefaultDynamicFrictionCoefficient = 0.2f;    // determines friction when sliding; higher coefficient => more friction
+	public const float DefaultStaticFrictionCoefficient  = 1f;		// determines friction most of the time; higher coefficient => more friction
+	public const float DefaultDynamicFrictionCoefficient = 0.2f;	// determines friction when sliding;     higher coefficient => more friction
+
+	// ✧˖°. I identify as a constant ⋆˙⟡
+	Vector2 gravityAcceleration = new Vector2(0f, 980f / 60f);		// ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
+																	// divided by 60 to get u / (s*t) -> u/s applied each tick
 
 	// Technical constants
-	public const int DashDuration = 15;                             // ticks; what it says on the tin
-	public const int DashCooldown = 6;                              // ticks; how long to wait before allowing the player to dash again
-	public const int DashEffectPeriod = 6;							// ticks; how long to wait between successive instances of DashEffect
-	public const int InputBuffer = 6;								// ticks; how early can an input be pressed and still register
-	public const int CoyoteTime = 6;								// ticks; how long after leaving a platform the player can still jump
-	public const int InteractionLock = 20;							// ticks; how long to lock the player's movement when interacting with something
-	public const int WalljumpLock = 0;								// ticks;                                     ** when walljumping
-	public const int UpdatesPerSecond = 60;							// ticks/second;
+	public const float MinJumpStrength			= 0.25f;			// multiplier; strength of a jump with no accumulation (i.e. pressed for only 1 tick)
+	public const int MaxJumpAccumulationTime	= 10;				// ticks; how long the jump key needs to be held for a maxiumum strength jump
+	public const int DashDuration				= 15;				// ticks; what it says on the tin
+	public const int DashCooldown				= 6;				// ticks; how long to wait before allowing the player to dash again
+	public const int DashEffectPeriod			= 6;				// ticks; how long to wait between successive instances of DashEffect
+	public const int InputBuffer				= 6;				// ticks; how early can an input be pressed and still register
+	public const int CoyoteTime					= 6;				// ticks; how long after leaving a platform the player can still jump
+	public const int InteractionLock			= 20;				// ticks; how long to lock the player's movement when interacting with something
+	public const int WalljumpLock				= 0;				// ticks;                                     ** when walljumping
+	public const int UpdatesPerSecond			= 60;				// ticks/second;
 
 	// other technical shit
-	Vector2 gravityAcceleration = new Vector2(0f, 980f / 60f);      // ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
-																	// divided by 60 to get u / (s*t) -> u/s applied each tick
-	Random rand = new Random();
-	enum State								// does this count as a constant?
+	Random random = new Random();
+	public enum State
 	{
 		// stationary
 		Idle,
@@ -59,19 +56,19 @@ public partial class Player : CharacterBody2D
 		// interactions
 		Kicking,
 	}
-	State currentState = State.Idle;        // the player's current state
-	int stateLockCountdown = 0;             // ticks; how long until the state can be changed again
-	// int movementLock = 0;                   // ticks; used for preventing player movement for a set time
-	int dashEffectCounter = 0;              // ticks; how long until a new dash effect "particle" can be spawned
-	int dashCounter = 0;                    // ticks; how long since we started dashing
-
-	public bool isGrounded = false;
-	bool canWalljump = false;
-	int airTime = 0;						// ticks; how long has the character spent in the air
-	int jumpBuffer = 0;						// ticks; is a jump action buffered and how much time is left
-	int kickBuffer = 0;                     // ticks; is a kick action buffered and how much time is left
-	int dashBuffer = 0;                     // ticks; is a dash action buffered and how much time is left
-	int facingDirection = 1;				// 1 = right, -1 = left
+	public State currentState	= State.Idle;		// the player's current state
+	int stateLockCountdown		= 0;				// ticks; how long until the state can be changed again
+	// int movementLock			= 0;				// ticks; used for preventing player movement for a set time
+	int dashEffectCounter		= 0;				// ticks; how long until a new dash effect "particle" can be spawned
+	int dashCounter				= 0;				// ticks; how long since we started dashing
+	public bool isGrounded		= false;
+	bool canWalljump			= false;
+	int jumpDuration			= 0;				// ticks; how long will the next jump be
+	int airTime					= 0;				// ticks; how long has the character spent in the air
+	int jumpBuffer				= 0;				// ticks; is a jump action buffered and how much time is left
+	int kickBuffer				= 0;				// ticks; is a kick action buffered and how much time is left
+	int dashBuffer				= 0;				// ticks; is a dash action buffered and how much time is left
+	int facingDirection			= 1;				// 1 = right, -1 = left
 
 
 	// Node aliases so I don't go insane
@@ -86,6 +83,13 @@ public partial class Player : CharacterBody2D
 	private void setAnimation(string animation)
 	{
 		PlayerSprite.Play(animation);
+	}
+
+	private void playJumpSFX()
+	{
+		// moved to a separate function
+		JumpSFX.PitchScale = 1f + ((float)random.NextDouble() - 0.5f) * 0.1f;
+		JumpSFX.Play();
 	}
 
 	private void tryCreateDashEffect()
@@ -243,9 +247,7 @@ public partial class Player : CharacterBody2D
 
 					currentState = State.Jumping;
 				isGrounded = false;
-				// TODO: move SFX to a separate function
-				JumpSFX.PitchScale = 1f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
-				JumpSFX.Play();
+				playJumpSFX();
 			}
 			else if (canWalljump && stateLockCountdown <= 0)
 			{
@@ -273,6 +275,7 @@ public partial class Player : CharacterBody2D
 				velocity.Y += (1 + Mathf.Atan(velocity.Y * 0.01f) * 2 / Mathf.Pi) * -JumpVelocity / Mathf.Sqrt2;
 				velocity.X += walljumpDirection * -JumpVelocity / Mathf.Sqrt2;
 				facingDirection = -walljumpDirection; // TIL the decimal point isn't required // that comment is out of place now because I changed this to an int
+				playJumpSFX();
 			}
 			else if (Input.IsActionJustPressed("jump"))	// checking again so buffer is only updated on button press
 			{
@@ -436,25 +439,31 @@ public partial class Player : CharacterBody2D
 		{
 			jumpBuffer--;
 		}
+
 		if (kickBuffer > 0)
 		{
 			kickBuffer--;
 		}
+
 		if (stateLockCountdown > 0)
 		{
 			stateLockCountdown--;
 		}
+
 		if (dashEffectCounter > 0)
 		{
 			dashEffectCounter--;
 		}
+
 		if (dashCounter > 0)
 		{
 			dashCounter--;
-		}else if (dashCounter < 0)
+		}
+		else if (dashCounter < 0)
 		{
 			dashCounter++;
 		}
+
 		if (dashBuffer > 0)
 		{
 			dashBuffer--;
@@ -463,7 +472,7 @@ public partial class Player : CharacterBody2D
 		// update debug overlay
 		GetNode<Label>("../HUD/PositionDisplay").Text = $"Position:\n    x: {Position.X}\n    y: {Position.Y}";
 		GetNode<Label>("../HUD/VelocityDisplay").Text = $"Velocity:\n    x: {Velocity.X}\n    y: {Velocity.Y}";
-		GetNode<Label>("../HUD/StateDisplay").Text = $"State: {currentState}\nstateLockCountdown: {stateLockCountdown.ToString()}\njumpBuffer: {jumpBuffer}\nkickBuffer: {kickBuffer}";
+		GetNode<Label>("../HUD/StateDisplay").Text    = $"State: {currentState}\nstateLockCountdown: {stateLockCountdown.ToString()}"; //\njumpBuffer: {jumpBuffer}\nkickBuffer: {kickBuffer}";
 
 		Velocity = velocity;
 		MoveAndSlide();
