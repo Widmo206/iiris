@@ -13,6 +13,8 @@ config_version=5
 config/name="IIRIS"
 run/main_scene="res://scenes/main_menu.tscn"
 config/features=PackedStringArray("4.4", "C#", "GL Compatibility")
+config/icon="uid://cjiw2kgou8mm3"
+config/windows_native_icon="res://icon.ico"
 
 [autoload]
 
