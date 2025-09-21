@@ -72,7 +72,11 @@ text = "Game by Widmo206
 - - -
 Music by yd & OveMelaa
 - - -
-Sprites by Kenney & Arks"
+Sprites by:
+Widmo206
+Kenney
+Arks
+PiiiXL"
 horizontal_alignment = 1
 
 [node name="Options" type="VFlowContainer" parent="."]
