@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 public partial class WalljumpDetector : Node2D
@@ -33,7 +34,7 @@ public partial class WalljumpDetector : Node2D
 	private bool CheckSide(Area2D side)
 	{
 		AnimatedSprite2D debugSprite = side.GetNode<AnimatedSprite2D>("Collider/DebugIndicator");
-		if (side.OverlapsBody(Ground))
+		if (side.GetOverlappingBodies().Count() > 0)
 		{
 			// Touching wall
 			if (player.isGrounded)

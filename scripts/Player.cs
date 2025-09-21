@@ -11,27 +11,27 @@ public partial class Player : CharacterBody2D
 	// Physics constants
 	public const float BaseSpeed				= 250f;				// units/second; how fast the player walks
 	public const float CrouchSpeed				= 250f;				// units/second; how fast the player walks while crouched
+	public const float DashSpeed				= 400f;				// u / s; dash speed is independent of mass
 
 	public const float Mass						= 40f;				// kilograms; the PC's mass, without any carried items (TBA)
 	public const float AccelerationForce		= 600f;				// kg*u / (s*t); magnitude of the force applied when the player is accelerating
 																	// (yes, I'm mixing time units; velocities are in u/s, but acceleration is applied each tick)
 	public const float JumpMomentum				= 12000f;			// kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
+	public const float MinJumpStrength			= 0.25f;			// multiplier; strength of a jump with no accumulation (i.e. pressed for only 1 tick)
 	public const float AirControlFactor			= 0.5f;				// the PCs horizontal acceleration is multiplied by this in the air
-	public const float DashSpeed				= 400f;				// u / s; dash speed is independent of mass
 
 	public const float DefaultStaticFrictionCoefficient  = 1f;		// determines friction most of the time; higher coefficient => more friction
 	public const float DefaultDynamicFrictionCoefficient = 0.2f;	// determines friction when sliding;     higher coefficient => more friction
 
 	// ✧˖°. I identify as a constant ⋆˙⟡
-	Vector2 gravityAcceleration = new Vector2(0f, 980f / 60f);		// ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
-																	// divided by 60 to get u / (s*t) -> u/s applied each tick
+	readonly Vector2 gravityAcceleration = new Vector2(0f, 980f / 60f);	// ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
+																		// divided by 60 to get u / (s*t) -> u/s applied each tick
 
 	// Technical constants
-	public const float MinJumpStrength			= 0.25f;			// multiplier; strength of a jump with no accumulation (i.e. pressed for only 1 tick)
 	public const int MaxJumpAccumulationTime	= 10;				// ticks; how long the jump key needs to be held for a maxiumum strength jump
 	public const int DashDuration				= 15;				// ticks; what it says on the tin
 	public const int DashCooldown				= 6;				// ticks; how long to wait before allowing the player to dash again
-	public const int DashEffectPeriod			= 6;				// ticks; how long to wait between successive instances of DashEffect
+	public const int DashEffectInterval			= 6;				// ticks; how long to wait between successive instances of DashEffect
 	public const int InputBuffer				= 6;				// ticks; how early can an input be pressed and still register
 	public const int CoyoteTime					= 6;				// ticks; how long after leaving a platform the player can still jump
 	public const int InteractionLock			= 20;				// ticks; how long to lock the player's movement when interacting with something
@@ -57,13 +57,14 @@ public partial class Player : CharacterBody2D
 		Kicking,
 	}
 	public State currentState	= State.Idle;		// the player's current state
+	string currentHitbox		= "";				// which hitbox is currently enabled; only used by setHitbox to check if the requested hitbox is different from the current one
 	int stateLockCountdown		= 0;				// ticks; how long until the state can be changed again
 	// int movementLock			= 0;				// ticks; used for preventing player movement for a set time
 	int dashEffectCounter		= 0;				// ticks; how long until a new dash effect "particle" can be spawned
 	int dashCounter				= 0;				// ticks; how long since we started dashing
 	public bool isGrounded		= false;
 	bool canWalljump			= false;
-	int jumpDuration			= 0;				// ticks; how long will the next jump be
+	int jumpAccumulation		= 0;				// ticks; how long the jump button has been pressed
 	int airTime					= 0;				// ticks; how long has the character spent in the air
 	int jumpBuffer				= 0;				// ticks; is a jump action buffered and how much time is left
 	int kickBuffer				= 0;				// ticks; is a kick action buffered and how much time is left
@@ -72,17 +73,53 @@ public partial class Player : CharacterBody2D
 
 
 	// Node aliases so I don't go insane
-	Node2D RootScene;
-	AnimatedSprite2D PlayerSprite;
-	CollisionShape2D InteractionCollider;
-	WalljumpDetector WalljumpDetector;
-	TileMapLayer Ground;
-	AudioStreamPlayer JumpSFX;
-	PackedScene dashEffect;
+	Node2D				RootScene;
+	AnimatedSprite2D	PlayerSprite;
+	CollisionShape2D	InteractionCollider;
+	WalljumpDetector	WalljumpDetector;
+	Area2D				SlopeDetector;
+	TileMapLayer		Ground;
+	AudioStreamPlayer	JumpSFX;
+	PackedScene			dashEffect;
+
+	CollisionShape2D	StandingCollider;
+	CollisionShape2D	CrouchingCollider;
+	CollisionShape2D	DashingCollider;
 
 	private void setAnimation(string animation)
 	{
 		PlayerSprite.Play(animation);
+	}
+
+	private void setHitbox(string hitbox)
+	{
+		// don't bother the nodes if there's no need to change anything
+		if (hitbox == currentHitbox) { return; }
+
+		currentHitbox = hitbox;
+		switch (hitbox)
+		{
+			case "standing":
+				StandingCollider.Disabled  = false;
+				CrouchingCollider.Disabled = true;
+				DashingCollider.Disabled   = true;
+				break;
+
+			case "crouching":
+				StandingCollider.Disabled  = true;
+				CrouchingCollider.Disabled = false;
+				DashingCollider.Disabled   = true;
+				break;
+
+			case "dashing":
+				StandingCollider.Disabled  = true;
+				CrouchingCollider.Disabled = true;
+				DashingCollider.Disabled   = false;
+				break;
+
+			default:
+				throw new ArgumentException($"Missing or incorrect hitbox state: {hitbox}");
+		}
 	}
 
 	private void playJumpSFX()
@@ -99,7 +136,7 @@ public partial class Player : CharacterBody2D
 			Node2D instance = (Node2D) dashEffect.Instantiate();
 			instance.Position = Position;
 			RootScene.AddChild(instance);
-			dashEffectCounter = DashEffectPeriod;
+			dashEffectCounter = DashEffectInterval;
 		}
 	}
 
@@ -109,12 +146,17 @@ public partial class Player : CharacterBody2D
 		//gravityAcceleration = GetGravity() / UpdatesPerSecond;
 
 		// Populate node aliases
-		RootScene = GetTree().Root.GetChild<Node2D>(1);		// grabs the current Level scene (there's probably a more elegant/robust way to do this)
-		PlayerSprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-		InteractionCollider = GetNode<CollisionShape2D>("InteractionTrigger/Collider");
-		WalljumpDetector = GetNode<WalljumpDetector>("WalljumpDetector");
-		Ground = RootScene.GetNode<TileMapLayer>("Terrain/Ground");
-		JumpSFX = GetNode<AudioStreamPlayer>("JumpSfx");
+		RootScene			= GetTree().Root.GetChild<Node2D>(1);		// grabs the current Level scene (there's probably a more elegant/robust way to do this)
+		PlayerSprite		= GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		InteractionCollider	= GetNode<CollisionShape2D>("InteractionTrigger/Collider");
+		WalljumpDetector	= GetNode<WalljumpDetector>("WalljumpDetector");
+		SlopeDetector		= GetNode<Area2D>("SlopeDetector");
+		Ground				= RootScene.GetNode<TileMapLayer>("Terrain/Ground");
+		JumpSFX				= GetNode<AudioStreamPlayer>("JumpSfx");
+
+		StandingCollider	= GetNode<CollisionShape2D>("StandingCollider");
+		CrouchingCollider	= GetNode<CollisionShape2D>("CrouchingCollider");
+		DashingCollider		= GetNode<CollisionShape2D>("DashingCollider");
 
 		dashEffect = GD.Load<PackedScene>("res://scenes/dash_effect.tscn");
 	}
@@ -123,6 +165,23 @@ public partial class Player : CharacterBody2D
 	{
 		Vector2 velocity = Velocity;
 		isGrounded = IsOnFloor();
+
+
+		// Dash: Handle colliding with a slope
+		if (currentState == State.Dashing)
+		{
+			var slopes = SlopeDetector.GetOverlappingBodies();
+			foreach (var slopeTileMap in slopes)
+			{
+				Slope slope = slopeTileMap.GetNode<Slope>("..");
+				// dot product is negative if we're moving into the slope, 0 if we're riding along it, positive if we're moving away
+				if (velocity.Dot(slope.getNormalVector()) <= 0)
+				{
+					velocity = slope.getNormalVector() * DashSpeed;
+				}
+			}
+		}
+
 
 		// Handle dash expiring (at the beginning, so it doesn't break shit)
 		// checking for lower-than-expected velocity to prevent getting stuck on walls
@@ -229,6 +288,12 @@ public partial class Player : CharacterBody2D
 		WalljumpDetector.CheckWalljump();
 		canWalljump = WalljumpDetector.canWalljump;
 		// TODO: make jump stronger/weaker based on how long the key is held (jump on rising or falling edge?) // falling edge: count up to some limit, then jump when released
+
+		if (Input.IsActionPressed("jump") && jumpAccumulation < MaxJumpAccumulationTime)
+		{
+			jumpAccumulation++;
+		}
+
 		if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
 		{
 			//GD.Print("traying to jump");
@@ -314,7 +379,8 @@ public partial class Player : CharacterBody2D
 		if (inputDirection == 0f)
 		{
 			velocity.X += decelerationFriction;
-			if (isGrounded && stateLockCountdown <= 0) {
+			if (isGrounded && stateLockCountdown <= 0)
+			{
 				if (Input.IsActionPressed("crouch"))
 				{
 					currentState = State.Crouching;
@@ -332,7 +398,7 @@ public partial class Player : CharacterBody2D
 			{
 				targetVelocity = inputDirection * CrouchSpeed;
 				if (isGrounded)
-				{ 
+				{
 					currentState = State.Walking;
 				}
 			}
@@ -373,7 +439,57 @@ public partial class Player : CharacterBody2D
 			}
 			velocity.X += Mathf.Clamp(acceleration, -staticFriction, staticFriction);
 
-			
+
+		}
+
+
+		// Collision Box Handling
+		switch (currentState)
+		{
+			case State.Idle:
+				setHitbox("standing");
+				break;
+
+			case State.Crouching:
+				setHitbox("crouching");
+				break;
+
+			case State.Kicking:
+				setHitbox("standing");
+				break;
+
+			case State.Walking:
+				setHitbox("standing");
+				break;
+
+			case State.Running:
+				setHitbox("standing");
+				break;
+
+			case State.Sliding:
+				setHitbox("crouching");
+				break;
+
+			case State.Dashing:
+				setHitbox("dashing");
+				tryCreateDashEffect();
+				break;
+
+			case State.Jumping:
+				setHitbox("standing");
+				break;
+
+			case State.Walljumping:
+				setHitbox("standing");
+				break;
+
+			case State.Falling:
+				setHitbox("standing");
+				break;
+
+			default:
+				// I forgot to add a case
+				throw new NotImplementedException($"Missing hitbox implementation for {currentState}");
 		}
 
 
@@ -420,6 +536,10 @@ public partial class Player : CharacterBody2D
 			case State.Falling:
 				setAnimation("fall");
 				break;
+
+			default:
+				// I forgot to add a case
+				throw new NotImplementedException($"Missing animation implementation for {currentState}");
 		}
 
 
@@ -435,44 +555,23 @@ public partial class Player : CharacterBody2D
 
 
 		// Frame-counter management
-		if (jumpBuffer > 0)
-		{
-			jumpBuffer--;
-		}
+		if (jumpBuffer > 0)			{ jumpBuffer--; }
 
-		if (kickBuffer > 0)
-		{
-			kickBuffer--;
-		}
+		if (kickBuffer > 0)			{ kickBuffer--; }
 
-		if (stateLockCountdown > 0)
-		{
-			stateLockCountdown--;
-		}
+		if (stateLockCountdown > 0)	{ stateLockCountdown--; }
 
-		if (dashEffectCounter > 0)
-		{
-			dashEffectCounter--;
-		}
+		if (dashEffectCounter > 0)	{ dashEffectCounter--; }
 
-		if (dashCounter > 0)
-		{
-			dashCounter--;
-		}
-		else if (dashCounter < 0)
-		{
-			dashCounter++;
-		}
+		if (dashCounter > 0)		{ dashCounter--; }
+		else if (dashCounter < 0)	{ dashCounter++; }
 
-		if (dashBuffer > 0)
-		{
-			dashBuffer--;
-		}
+		if (dashBuffer > 0)			{ dashBuffer--; }
 
 		// update debug overlay
 		GetNode<Label>("../HUD/PositionDisplay").Text = $"Position:\n    x: {Position.X}\n    y: {Position.Y}";
 		GetNode<Label>("../HUD/VelocityDisplay").Text = $"Velocity:\n    x: {Velocity.X}\n    y: {Velocity.Y}";
-		GetNode<Label>("../HUD/StateDisplay").Text    = $"State: {currentState}\nstateLockCountdown: {stateLockCountdown.ToString()}"; //\njumpBuffer: {jumpBuffer}\nkickBuffer: {kickBuffer}";
+		GetNode<Label>("../HUD/StateDisplay").Text    = $"State: {currentState}\nstateLockCountdown: {stateLockCountdown.ToString()}";
 
 		Velocity = velocity;
 		MoveAndSlide();
