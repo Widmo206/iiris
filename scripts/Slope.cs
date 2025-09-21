@@ -22,14 +22,14 @@ public partial class Slope : Node2D
 	}
 	private readonly Dictionary<Type, Vector2> Normals = new Dictionary<Type, Vector2>{
 		// Frame
-		{ Type.R_1x2_Frame, new Vector2(-0.5f, -Mathf.Sqrt2) },
-		{ Type.L_1x2_Frame, new Vector2( 0.5f, -Mathf.Sqrt2) },
+		{ Type.R_1x2_Frame, new Vector2(-0.5f, -Mathf.Sqrt2 / 2) },
+		{ Type.L_1x2_Frame, new Vector2( 0.5f, -Mathf.Sqrt2 / 2) },
 		// metal (background)
-		{ Type.R_1x2_Metal_BG, new Vector2(-0.5f, -Mathf.Sqrt2)},
-		{ Type.L_1x2_Metal_BG, new Vector2( 0.5f, -Mathf.Sqrt2)},
+		{ Type.R_1x2_Metal_BG, new Vector2(-0.5f, -Mathf.Sqrt2 / 2)},
+		{ Type.L_1x2_Metal_BG, new Vector2( 0.5f, -Mathf.Sqrt2 / 2)},
 		// metal (foreground)
-		{ Type.R_1x2_Metal_FG, new Vector2(-0.5f, -Mathf.Sqrt2)},
-		{ Type.L_1x2_Metal_FG, new Vector2( 0.5f, -Mathf.Sqrt2)},
+		{ Type.R_1x2_Metal_FG, new Vector2(-0.5f, -Mathf.Sqrt2 / 2)},
+		{ Type.L_1x2_Metal_FG, new Vector2( 0.5f, -Mathf.Sqrt2 / 2)},
 	};
 
 

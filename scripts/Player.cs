@@ -18,7 +18,8 @@ public partial class Player : CharacterBody2D
 																	// (yes, I'm mixing time units; velocities are in u/s, but acceleration is applied each tick)
 	public const float JumpMomentum				= 12000f;			// kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
 	public const float MinJumpStrength			= 0.25f;			// multiplier; strength of a jump with no accumulation (i.e. pressed for only 1 tick)
-	public const float AirControlFactor			= 0.5f;				// the PCs horizontal acceleration is multiplied by this in the air
+	public const float AirControlFactor			= 0.5f;				// multiplier; the PCs horizontal acceleration is multiplied by this in the air
+	public const float SlopeSpeedFactor			= 1.2f;				// multiplier; how slopes influence dash speed
 
 	public const float DefaultStaticFrictionCoefficient  = 1f;		// determines friction most of the time; higher coefficient => more friction
 	public const float DefaultDynamicFrictionCoefficient = 0.2f;	// determines friction when sliding;     higher coefficient => more friction
@@ -61,7 +62,7 @@ public partial class Player : CharacterBody2D
 	int stateLockCountdown		= 0;				// ticks; how long until the state can be changed again
 	// int movementLock			= 0;				// ticks; used for preventing player movement for a set time
 	int dashEffectCounter		= 0;				// ticks; how long until a new dash effect "particle" can be spawned
-	int dashCounter				= 0;				// ticks; how long since we started dashing
+	int dashCounter				= 0;				// ticks; if positive: how long until the dash runs out; if negative: how much cooldown is left
 	public bool isGrounded		= false;
 	bool canWalljump			= false;
 	int jumpAccumulation		= 0;				// ticks; how long the jump button has been pressed
@@ -177,7 +178,15 @@ public partial class Player : CharacterBody2D
 				// dot product is negative if we're moving into the slope, 0 if we're riding along it, positive if we're moving away
 				if (velocity.Dot(slope.getNormalVector()) <= 0)
 				{
-					velocity = slope.getNormalVector() * DashSpeed;
+					Vector2 orthogonal = slope.getNormalVector().Rotated(-Mathf.Pi / 2); // orthoganal to the normal vector => parallel to slope surface
+					orthogonal *= Mathf.Sign(orthogonal.Dot(velocity)); // flip if necessary
+					velocity = orthogonal * DashSpeed * SlopeSpeedFactor;
+
+					// refresh dash
+					dashCounter = DashDuration;
+					//stateLockCountdown = DashDuration;
+
+					break; // only considering the first slope we can dash off of
 				}
 			}
 		}
