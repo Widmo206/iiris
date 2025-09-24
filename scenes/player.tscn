@@ -331,10 +331,10 @@ drag_vertical_enabled = true
 stream = ExtResource("3_gamhb")
 
 [node name="WalljumpDetector" type="Node2D" parent="."]
-visible = false
 script = ExtResource("4_fjrip")
 
 [node name="Left" type="Area2D" parent="WalljumpDetector"]
+visible = false
 rotation = -3.14159
 scale = Vector2(1, -1)
 collision_layer = 0

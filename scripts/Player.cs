@@ -17,7 +17,8 @@ public partial class Player : CharacterBody2D
 	public const float AccelerationForce		= 600f;				// kg*u / (s*t); magnitude of the force applied when the player is accelerating
 																	// (yes, I'm mixing time units; velocities are in u/s, but acceleration is applied each tick)
 	public const float JumpMomentum				= 12000f;			// kg*u / s; magnitude of the momentum (mass*velocity) applied to the player when jumping
-	public const float MinJumpStrength			= 0.25f;			// multiplier; strength of a jump with no accumulation (i.e. pressed for only 1 tick)
+	//public const float MinJumpStrength			= 0.75f;			// multiplier; strength of a jump with no accumulation (i.e. pressed for only 1 tick)
+	public const float JumpDecay				= 0.8f;				// multiplier; how quickly the player's vertical velocity decays when the jump key is released (lower is faster)
 	public const float AirControlFactor			= 0.5f;				// multiplier; the PCs horizontal acceleration is multiplied by this in the air
 	public const float SlopeSpeedFactor			= 1.2f;				// multiplier; how slopes influence dash speed
 
@@ -29,14 +30,14 @@ public partial class Player : CharacterBody2D
 																		// divided by 60 to get u / (s*t) -> u/s applied each tick
 
 	// Technical constants
-	public const int MaxJumpAccumulationTime	= 10;				// ticks; how long the jump key needs to be held for a maxiumum strength jump
+	public const int MaxJumpAccumulationTime	= 6;				// ticks; how long the jump key needs to be held for a maxiumum strength jump
 	public const int DashDuration				= 15;				// ticks; what it says on the tin
 	public const int DashCooldown				= 6;				// ticks; how long to wait before allowing the player to dash again
 	public const int DashEffectInterval			= 6;				// ticks; how long to wait between successive instances of DashEffect
 	public const int InputBuffer				= 6;				// ticks; how early can an input be pressed and still register
 	public const int CoyoteTime					= 6;				// ticks; how long after leaving a platform the player can still jump
 	public const int InteractionLock			= 20;				// ticks; how long to lock the player's movement when interacting with something
-	public const int WalljumpLock				= 0;				// ticks;                                     ** when walljumping
+	public const int WalljumpLock				= 5;				// ticks;                                     ** when walljumping
 	public const int UpdatesPerSecond			= 60;				// ticks/second;
 
 	// other technical shit
@@ -212,6 +213,7 @@ public partial class Player : CharacterBody2D
 			airTime = 0;
 			if (currentState == State.Jumping) {
 				currentState = State.Idle;
+				//jumpAccumulation = 0;
 			}
 		}
 		else
@@ -222,6 +224,7 @@ public partial class Player : CharacterBody2D
 			{
 				// GD.Print(currentState);
 				currentState = State.Falling;
+				jumpAccumulation = 0;
 			}
 		}
 
@@ -298,28 +301,30 @@ public partial class Player : CharacterBody2D
 		canWalljump = WalljumpDetector.canWalljump;
 		// TODO: make jump stronger/weaker based on how long the key is held (jump on rising or falling edge?) // falling edge: count up to some limit, then jump when released
 
-		if (Input.IsActionPressed("jump") && jumpAccumulation < MaxJumpAccumulationTime)
+		if (!Input.IsActionPressed("jump") && currentState == State.Jumping /*&& velocity.Y < 0f*/)
 		{
-			jumpAccumulation++;
+			// thanks to https://www.gamemakerkitchen.com/tutorials/jordan-guillou/10-levels-of-platformer-jumps/#5.-variable-jump-height
+			velocity.Y *= JumpDecay;
 		}
 
 		if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
 		{
 			//GD.Print("traying to jump");
-			float JumpVelocity = JumpMomentum / Mass; 
+			float JumpVelocity = JumpMomentum / Mass;
 			if ((isGrounded || airTime < CoyoteTime) && stateLockCountdown <= 0 && currentState != State.Jumping)
 			{
 				// Jumping
 				jumpBuffer = 0;
 				// should be unnecessary due to currentState
 				//airTime += CoyoteTime + 1; // to prevent jumping several times at once
-				velocity.Y = -JumpVelocity;
-				
-				// Exponential decay of horizontal velocity to prevent bunnyhopping
-				velocity.X += JumpVelocity * inputDirection * 0.5f * Mathf.Pow(2f, -Mathf.Pow(velocity.X, 2f)/BaseSpeed);
-				
+				velocity.Y = -JumpVelocity/* * MinJumpStrength*/;
 
-					currentState = State.Jumping;
+				// Exponential decay of horizontal velocity to prevent bunnyhopping
+				//velocity.X += JumpVelocity * inputDirection * 0.5f * Mathf.Pow(2f, -Mathf.Pow(velocity.X, 2f) / BaseSpeed);
+				velocity.X += BaseSpeed * inputDirection / 10;
+
+
+				currentState = State.Jumping;
 				isGrounded = false;
 				playJumpSFX();
 			}
@@ -347,11 +352,11 @@ public partial class Player : CharacterBody2D
 				// velocity.X *= -0.5f;
 				// Another Desmos equation; 
 				velocity.Y += (1 + Mathf.Atan(velocity.Y * 0.01f) * 2 / Mathf.Pi) * -JumpVelocity / Mathf.Sqrt2;
-				velocity.X += walljumpDirection * -JumpVelocity / Mathf.Sqrt2;
+				velocity.X = walljumpDirection * -JumpVelocity / Mathf.Sqrt2 /*- 0.5f* walljumpDirection*Mathf.Abs(velocity.X)*/;
 				facingDirection = -walljumpDirection; // TIL the decimal point isn't required // that comment is out of place now because I changed this to an int
 				playJumpSFX();
 			}
-			else if (Input.IsActionJustPressed("jump"))	// checking again so buffer is only updated on button press
+			else if (Input.IsActionJustPressed("jump")) // checking again so buffer is only updated on button press
 			{
 				jumpBuffer = InputBuffer;
 			}
@@ -577,10 +582,11 @@ public partial class Player : CharacterBody2D
 
 		if (dashBuffer > 0)			{ dashBuffer--; }
 
+
 		// update debug overlay
 		GetNode<Label>("../HUD/PositionDisplay").Text = $"Position:\n    x: {Position.X}\n    y: {Position.Y}";
 		GetNode<Label>("../HUD/VelocityDisplay").Text = $"Velocity:\n    x: {Velocity.X}\n    y: {Velocity.Y}";
-		GetNode<Label>("../HUD/StateDisplay").Text    = $"State: {currentState}\nstateLockCountdown: {stateLockCountdown.ToString()}";
+		GetNode<Label>("../HUD/StateDisplay").Text    = $"State: {currentState}\nstateLockCountdown: {stateLockCountdown.ToString()}\njumpAccumulation: {jumpAccumulation}";
 
 		Velocity = velocity;
 		MoveAndSlide();
