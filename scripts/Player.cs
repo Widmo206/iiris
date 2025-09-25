@@ -88,6 +88,11 @@ public partial class Player : CharacterBody2D
 	CollisionShape2D	CrouchingCollider;
 	CollisionShape2D	DashingCollider;
 
+	private bool isntStateLocked()
+	{
+		return stateLockCountdown <= 0;
+	}
+
 	private void setAnimation(string animation)
 	{
 		PlayerSprite.Play(animation);
@@ -177,7 +182,8 @@ public partial class Player : CharacterBody2D
 			{
 				Slope slope = slopeTileMap.GetNode<Slope>("..");
 				// dot product is negative if we're moving into the slope, 0 if we're riding along it, positive if we're moving away
-				if (velocity.Dot(slope.getNormalVector()) <= 0)
+				if (velocity.Dot(slope.getNormalVector()) <= 0.01f)
+				//if (velocity.AngleTo(slope.getNormalVector()) >= Mathf.Pi/2)
 				{
 					Vector2 orthogonal = slope.getNormalVector().Rotated(-Mathf.Pi / 2); // orthoganal to the normal vector => parallel to slope surface
 					orthogonal *= Mathf.Sign(orthogonal.Dot(velocity)); // flip if necessary
@@ -185,7 +191,7 @@ public partial class Player : CharacterBody2D
 
 					// refresh dash
 					dashCounter = DashDuration;
-					//stateLockCountdown = DashDuration;
+					stateLockCountdown = DashDuration;
 
 					break; // only considering the first slope we can dash off of
 				}
@@ -230,8 +236,9 @@ public partial class Player : CharacterBody2D
 
 
 		// Handle Interaction
-		if (Input.IsActionJustPressed("interact") || kickBuffer > 0) {
-			if (isGrounded && stateLockCountdown <= 0)
+		if (Input.IsActionJustPressed("interact") || kickBuffer > 0)
+		{
+			if (isGrounded && isntStateLocked())
 			{
 				currentState = State.Kicking;
 				// kickBuffer = 0;
@@ -255,7 +262,7 @@ public partial class Player : CharacterBody2D
 
 		// Handle Directional Actions
 		float inputDirection = 0f;
-		if (stateLockCountdown <= 0)
+		if (isntStateLocked())
 		{
 			inputDirection = Input.GetAxis("move_left", "move_right");
 		}
@@ -311,7 +318,7 @@ public partial class Player : CharacterBody2D
 		{
 			//GD.Print("traying to jump");
 			float JumpVelocity = JumpMomentum / Mass;
-			if ((isGrounded || airTime < CoyoteTime) && stateLockCountdown <= 0 && currentState != State.Jumping)
+			if ((isGrounded || airTime < CoyoteTime) && isntStateLocked() && currentState != State.Jumping)
 			{
 				// Jumping
 				jumpBuffer = 0;
@@ -328,7 +335,7 @@ public partial class Player : CharacterBody2D
 				isGrounded = false;
 				playJumpSFX();
 			}
-			else if (canWalljump && stateLockCountdown <= 0)
+			else if (canWalljump && isntStateLocked())
 			{
 				// Walljumping
 				int walljumpDirection;
@@ -362,25 +369,21 @@ public partial class Player : CharacterBody2D
 			}
 		}
 
-		// Handle Movement
-		
-		// direction moved under "Handle Directional Colliders"
 
+		// Handle Horizontal Movement
+		// direction moved under "Handle Directional Actions"
+
+		// Friction
 		float dynamicFriction = gravityAcceleration.Y * DefaultDynamicFrictionCoefficient;  // magnitude
 		float staticFriction = gravityAcceleration.Y * DefaultStaticFrictionCoefficient;	// yeah I know static friction works differently
 
 		float decelerationFriction = 0f;
-		// No friction in the air
-		if (velocity.X != 0f && isGrounded)
+		if (velocity.X != 0f && isGrounded)     // No friction in the air
 		{
 			if (currentState == State.Sliding)
-			{
-				decelerationFriction = dynamicFriction * -Mathf.Sign(velocity.X);
-			}
+			{ decelerationFriction = dynamicFriction * -Mathf.Sign(velocity.X); }
 			else
-			{
-				decelerationFriction = staticFriction * -Mathf.Sign(velocity.X);
-			}
+			{ decelerationFriction = staticFriction * -Mathf.Sign(velocity.X); }
 
 			if (Mathf.Abs(decelerationFriction) >= Mathf.Abs(velocity.X))
 			{
@@ -389,40 +392,44 @@ public partial class Player : CharacterBody2D
 			}
 		}
 
+		// Sliding
+		if (isntStateLocked())
+		{
+			if (Mathf.Abs(velocity.X) > 1.25f * BaseSpeed && isGrounded)
+			{ currentState = State.Sliding; }
+			else if (currentState == State.Sliding)
+			{ currentState = State.Idle; }
+		}
+
 		float targetVelocity = 0f;
-		if (inputDirection == 0f)
+		if (currentState == State.Sliding)
+		{ velocity.X += decelerationFriction; }
+		// Stopping
+		else if (inputDirection == 0f)
 		{
 			velocity.X += decelerationFriction;
-			if (isGrounded && stateLockCountdown <= 0)
+			if (isGrounded && isntStateLocked())
 			{
 				if (Input.IsActionPressed("crouch"))
-				{
-					currentState = State.Crouching;
-				}
+				{ currentState = State.Crouching; }
 				else
-				{
-					currentState = State.Idle;
-
-				}
+				{ currentState = State.Idle; }
 			}
 		}
+		// Walking, running, crouching, etc.
 		else
 		{
 			if (Input.IsActionPressed("crouch"))
 			{
 				targetVelocity = inputDirection * CrouchSpeed;
 				if (isGrounded)
-				{
-					currentState = State.Walking;
-				}
+				{ currentState = State.Walking; }
 			}
 			else
 			{
 				targetVelocity = inputDirection * BaseSpeed;
 				if (isGrounded)
-				{
-					currentState = State.Running;
-				}
+				{ currentState = State.Running; }
 			}
 
 			float acceleration = 0f;
@@ -436,9 +443,7 @@ public partial class Player : CharacterBody2D
 			{
 				acceleration = inputDirection * AccelerationForce / Mass;
 				if (!isGrounded)
-				{
-					acceleration *= AirControlFactor;
-				}
+				{ acceleration *= AirControlFactor; }
 
 				if (Mathf.Abs(velocity.X) > 0.9f * Mathf.Abs(targetVelocity) && directionAlignedWithVelocity)
 				{
