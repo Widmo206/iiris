@@ -1,0 +1,72 @@
+[gd_scene load_steps=8 format=3 uid="uid://cx38yscwjfjn7"]
+
+[ext_resource type="Script" uid="uid://dpfsn3gxi0weg" path="res://scripts/Sign.cs" id="1_kd50q"]
+[ext_resource type="Texture2D" uid="uid://behw43jut2p55" path="res://sprites/kenney-platformer-tilemap.png" id="1_shbub"]
+[ext_resource type="Texture2D" uid="uid://b6ua68et8jyld" path="res://sprites/kenney-rock-tilemap.png" id="3_8yyji"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kd50q"]
+radius = 32.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8yyji"]
+atlas = ExtResource("1_shbub")
+region = Rect2(114, 76, 18, 18)
+
+[sub_resource type="LabelSettings" id="LabelSettings_shbub"]
+font_size = 64
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ge2pc"]
+atlas = ExtResource("3_8yyji")
+region = Rect2(19, 76, 18, 18)
+
+[node name="Sign" type="Node2D"]
+script = ExtResource("1_kd50q")
+
+[node name="PlayerDetector" type="Area2D" parent="."]
+position = Vector2(0, -9)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetector"]
+shape = SubResource("CircleShape2D_kd50q")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -9)
+texture = SubResource("AtlasTexture_8yyji")
+
+[node name="Message" type="Node2D" parent="."]
+position = Vector2(0, -20)
+scale = Vector2(0.094, 0.094)
+
+[node name="Text" type="Label" parent="Message"]
+z_index = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -512.0
+offset_top = -256.0
+offset_right = 512.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet."
+label_settings = SubResource("LabelSettings_shbub")
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="TextureRect" type="TextureRect" parent="Message/Text"]
+modulate = Color(0, 0, 0, 0.247059)
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("AtlasTexture_ge2pc")
+stretch_mode = 1
+
+[connection signal="body_entered" from="PlayerDetector" to="." method="OnPlayerEntered"]
+[connection signal="body_exited" from="PlayerDetector" to="." method="OnPlayerLeft"]

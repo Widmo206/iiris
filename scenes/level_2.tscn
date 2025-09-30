@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://yqvqilqpavrl"]
+[gd_scene load_steps=13 format=4 uid="uid://yqvqilqpavrl"]
 
 [ext_resource type="Script" uid="uid://10uxc3y0kuvf" path="res://scripts/Level.cs" id="1_ne2mo"]
 [ext_resource type="PackedScene" uid="uid://cdkfv6fox1rji" path="res://scenes/hud.tscn" id="2_6cvei"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://d0dhhyr1fbx55" path="res://scenes/slope.tscn" id="6_6cvei"]
 [ext_resource type="PackedScene" uid="uid://db7xefnkc1u2y" path="res://scenes/door.tscn" id="6_g2hoc"]
 [ext_resource type="PackedScene" uid="uid://btimyafuh6u0b" path="res://scenes/collectible.tscn" id="7_fldb1"]
+[ext_resource type="PackedScene" uid="uid://cx38yscwjfjn7" path="res://scenes/sign.tscn" id="7_que50"]
 [ext_resource type="AudioStream" uid="uid://llt8m8bed0do" path="res://sounds/BMGS.ogg" id="8_guvtl"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vhy51"]
@@ -88,6 +89,9 @@ SlopeType = 0
 [node name="Slope1" parent="Terrain" instance=ExtResource("6_6cvei")]
 position = Vector2(888, 384)
 SlopeType = 0
+
+[node name="Sign" parent="." instance=ExtResource("7_que50")]
+position = Vector2(148, 360)
 
 [node name="Door" parent="." instance=ExtResource("6_g2hoc")]
 position = Vector2(18, 157)
