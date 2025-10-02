@@ -12,5 +12,5 @@ script = ExtResource("1_reoje")
 [node name="Sprite" type="Sprite2D" parent="."]
 position = Vector2(0, -12)
 texture = SubResource("AtlasTexture_j4jso")
-hframes = 25
+hframes = 26
 frame = 24

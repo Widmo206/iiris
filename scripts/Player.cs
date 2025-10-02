@@ -23,7 +23,7 @@ public partial class Player : CharacterBody2D
 	public const float SlopeSpeedFactor			= 1.2f;				// multiplier; how slopes influence dash speed
 
 	public const float DefaultStaticFrictionCoefficient  = 1f;		// determines friction most of the time; higher coefficient => more friction
-	public const float DefaultDynamicFrictionCoefficient = 0.2f;	// determines friction when sliding;     higher coefficient => more friction
+	public const float DefaultDynamicFrictionCoefficient = 0.1f;	// determines friction when sliding;     higher coefficient => more friction
 
 	// ✧˖°. I identify as a constant ⋆˙⟡
 	readonly Vector2 gravityAcceleration = new Vector2(0f, 980f / 60f);	// ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
@@ -395,7 +395,8 @@ public partial class Player : CharacterBody2D
 		// Sliding
 		if (isntStateLocked())
 		{
-			if (Mathf.Abs(velocity.X) > 1.25f * BaseSpeed && isGrounded)
+			if (Mathf.Abs(velocity.X) > 1.25f * BaseSpeed && isGrounded && Input.IsActionPressed("crouch") ||
+				Mathf.Abs(velocity.X) > 2f * BaseSpeed && isGrounded)
 			{ currentState = State.Sliding; }
 			else if (currentState == State.Sliding)
 			{ currentState = State.Idle; }
