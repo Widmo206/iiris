@@ -74,7 +74,7 @@ region = Rect2(312, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3v2ag"]
 atlas = ExtResource("2_fuuox")
-region = Rect2(408, 0, 24, 24)
+region = Rect2(600, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_skywk"]
 atlas = ExtResource("2_fuuox")
