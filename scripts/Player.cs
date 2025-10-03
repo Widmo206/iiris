@@ -1,10 +1,10 @@
 ﻿using Godot;
 using System;
-using System.Diagnostics.Metrics;
-using System.Text.RegularExpressions;
 
 // I have no idea what I'm doing
 // - Widmo, 2025.02.04
+
+// Is that comment too unprofessional?
 
 public partial class Player : CharacterBody2D
 {
@@ -30,7 +30,7 @@ public partial class Player : CharacterBody2D
 																		// divided by 60 to get u / (s*t) -> u/s applied each tick
 
 	// Technical constants
-	public const int MaxJumpAccumulationTime	= 6;				// ticks; how long the jump key needs to be held for a maxiumum strength jump
+	//public const int MaxJumpAccumulationTime	= 6;				// ticks; how long the jump key needs to be held for a maxiumum strength jump
 	public const int DashDuration				= 15;				// ticks; what it says on the tin
 	public const int DashCooldown				= 6;				// ticks; how long to wait before allowing the player to dash again
 	public const int DashEffectInterval			= 6;				// ticks; how long to wait between successive instances of DashEffect
@@ -66,6 +66,7 @@ public partial class Player : CharacterBody2D
 	int dashCounter				= 0;				// ticks; if positive: how long until the dash runs out; if negative: how much cooldown is left
 	public bool isGrounded		= false;
 	bool canWalljump			= false;
+	bool dashEnabled			= true;
 	int jumpAccumulation		= 0;				// ticks; how long the jump button has been pressed
 	int airTime					= 0;				// ticks; how long has the character spent in the air
 	int jumpBuffer				= 0;				// ticks; is a jump action buffered and how much time is left
@@ -87,6 +88,19 @@ public partial class Player : CharacterBody2D
 	CollisionShape2D	StandingCollider;
 	CollisionShape2D	CrouchingCollider;
 	CollisionShape2D	DashingCollider;
+
+
+	//private int dashCooldownPercentage()
+	//{
+	//	if (dashEffectCounter > 0)
+	//	{
+	//		return (int)Mathf.Round(100 * (float)dashCounter / (float)DashDuration);
+	//	}
+	//	else
+	//	{
+	//		return (int)Mathf.Round(100 * (1f + (float)dashCounter / (float)DashCooldown));
+	//	}
+	//}
 
 	private bool isntStateLocked()
 	{
@@ -281,6 +295,7 @@ public partial class Player : CharacterBody2D
 
 		// Handle Dash
 		// dash expiring is checked at the beginning, so you can potentially start a new dash in the same tick
+		// except you can't because of cooldown
 		if (Input.IsActionJustPressed("dash") && inputDirection != 0f || dashBuffer > 0)
 		{
 			if (dashCounter == 0)
@@ -306,7 +321,6 @@ public partial class Player : CharacterBody2D
 		// Check for walljumping
 		WalljumpDetector.CheckWalljump();
 		canWalljump = WalljumpDetector.canWalljump;
-		// TODO: make jump stronger/weaker based on how long the key is held (jump on rising or falling edge?) // falling edge: count up to some limit, then jump when released
 
 		if (!Input.IsActionPressed("jump") && currentState == State.Jumping /*&& velocity.Y < 0f*/)
 		{
@@ -360,7 +374,7 @@ public partial class Player : CharacterBody2D
 				// Another Desmos equation; 
 				velocity.Y += (1 + Mathf.Atan(velocity.Y * 0.01f) * 2 / Mathf.Pi) * -JumpVelocity / Mathf.Sqrt2;
 				velocity.X = walljumpDirection * -JumpVelocity / Mathf.Sqrt2 /*- 0.5f* walljumpDirection*Mathf.Abs(velocity.X)*/;
-				facingDirection = -walljumpDirection; // TIL the decimal point isn't required // that comment is out of place now because I changed this to an int
+				facingDirection = -walljumpDirection; // TIL the decimal point isn't required // that comment is out of place now because I changed this to an int // it's not even a literal anymore
 				playJumpSFX();
 			}
 			else if (Input.IsActionJustPressed("jump")) // checking again so buffer is only updated on button press
@@ -593,6 +607,20 @@ public partial class Player : CharacterBody2D
 		GetNode<Label>("../HUD/PositionDisplay").Text = $"Position:\n    x: {Position.X}\n    y: {Position.Y}";
 		GetNode<Label>("../HUD/VelocityDisplay").Text = $"Velocity:\n    x: {Velocity.X}\n    y: {Velocity.Y}";
 		GetNode<Label>("../HUD/StateDisplay").Text    = $"State: {currentState}\nstateLockCountdown: {stateLockCountdown.ToString()}\njumpAccumulation: {jumpAccumulation}";
+
+
+		// non-debug UI management
+		//string percentage = dashCooldownPercentage().ToString().PadLeft(3, '0');
+		string state;
+		if (currentState == State.Dashing) { state = "ACTIVE"; }
+		else if (dashEnabled)
+		{
+			if (dashCounter == 0) { state = "READY"; }
+			else { state = "RECHARGING"; }
+		}
+		else { state = "UNAVAILABLE"; }
+		GetNode<Label>("../HUD/DashIndicator").Text = $"Dash: {state}";
+
 
 		Velocity = velocity;
 		MoveAndSlide();
