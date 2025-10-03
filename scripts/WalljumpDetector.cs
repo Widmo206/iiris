@@ -1,7 +1,6 @@
 using Godot;
 using System;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 public partial class WalljumpDetector : Node2D
 {

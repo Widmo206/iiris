@@ -1,6 +1,5 @@
 using Godot;
 using System;
-using static Godot.OpenXRInterface;
 
 public partial class Collectible : Area2D
 {
