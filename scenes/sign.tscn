@@ -39,24 +39,23 @@ scale = Vector2(0.094, 0.094)
 
 [node name="Text" type="Label" parent="Message"]
 z_index = 1
+custom_minimum_size = Vector2(120, 90)
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -512.0
-offset_top = -256.0
-offset_right = 512.0
+offset_left = -60.0
+offset_top = -90.0
+offset_right = 60.0
 grow_horizontal = 2
 grow_vertical = 0
-text = "Lorem ipsum dolor sit amet.
-Lorem ipsum dolor sit amet.
-Lorem ipsum dolor sit amet."
+text = "Lorem ipsum"
 label_settings = SubResource("LabelSettings_shbub")
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="TextureRect" type="TextureRect" parent="Message/Text"]
+[node name="Background" type="TextureRect" parent="Message/Text"]
 modulate = Color(0, 0, 0, 0.247059)
 z_index = -1
 layout_mode = 1

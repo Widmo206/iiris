@@ -92,6 +92,10 @@ SlopeType = 0
 
 [node name="Sign" parent="." instance=ExtResource("7_que50")]
 position = Vector2(148, 360)
+TextOverride = "Thanks to
+u/hyad3n
+on reddit
+for the multiline string export syntax"
 
 [node name="Door" parent="." instance=ExtResource("6_g2hoc")]
 position = Vector2(18, 157)
