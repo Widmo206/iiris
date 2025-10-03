@@ -1,62 +1,85 @@
-[gd_scene load_steps=2 format=3 uid="uid://cdkfv6fox1rji"]
+[gd_scene load_steps=3 format=3 uid="uid://cdkfv6fox1rji"]
 
 [ext_resource type="Script" uid="uid://m761eoke41j3" path="res://scripts/Hud.cs" id="1_ahhtf"]
+[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://debug-ui-settings.tres" id="3_6fi6k"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_ahhtf")
 
 [node name="PositionDisplay" type="Label" parent="."]
-offset_left = 8.0
-offset_top = 52.0
-offset_right = 62.0
-offset_bottom = 78.0
+offset_left = 7.0
+offset_top = 79.0
+offset_right = 74.0
+offset_bottom = 154.0
+scale = Vector2(0.25, 0.25)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Position:
     x: 0.0
     y: 0.0"
+label_settings = ExtResource("3_6fi6k")
 
 [node name="VelocityDisplay" type="Label" parent="."]
-offset_left = 8.0
-offset_top = 127.0
-offset_right = 69.0
-offset_bottom = 153.0
+offset_left = 7.0
+offset_top = 154.0
+offset_right = 73.0
+offset_bottom = 229.0
+scale = Vector2(0.25, 0.25)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Velocity:
     x: 0.0
     y: 0.0"
+label_settings = ExtResource("3_6fi6k")
 
 [node name="StateDisplay" type="Label" parent="."]
-offset_left = 8.0
-offset_top = 202.0
-offset_right = 74.0
-offset_bottom = 229.0
+offset_left = 7.0
+offset_top = 229.0
+offset_right = 189.0
+offset_bottom = 278.0
+scale = Vector2(0.25, 0.25)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "State: Idle
 stateLockCountdown: 0"
+label_settings = ExtResource("3_6fi6k")
 
 [node name="CurrentLevel" type="Label" parent="."]
 offset_left = 8.0
 offset_right = 62.0
 offset_bottom = 26.0
+scale = Vector2(0.25, 0.25)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Level: Lorem Ipsum"
+label_settings = ExtResource("3_6fi6k")
 
 [node name="CoinCounter" type="Label" parent="."]
 offset_left = 8.0
 offset_top = 26.0
 offset_right = 69.0
 offset_bottom = 52.0
+scale = Vector2(0.25, 0.25)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Coins: 0"
+label_settings = ExtResource("3_6fi6k")
 
 [node name="FpsCounter" type="Label" parent="."]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -80.0
-offset_right = -18.0
-offset_bottom = 49.0
+offset_left = 75.0
+offset_top = 8.0
+offset_right = 323.0
+offset_bottom = 167.0
 grow_horizontal = 0
+scale = Vector2(0.25, 0.25)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "FPS: 0.0
 UPS: 0.0"
+label_settings = ExtResource("3_6fi6k")
+
+[node name="DashIndicator" type="Label" parent="."]
+offset_left = 7.0
+offset_top = 52.0
+offset_right = 178.0
+offset_bottom = 75.0
+scale = Vector2(0.25, 0.25)
+text = "Dash:  ---% / Disabled"
+label_settings = ExtResource("3_6fi6k")

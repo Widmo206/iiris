@@ -20,7 +20,7 @@ public partial class Sign : Node2D
 		Message.Visible = false;
 		if (TextOverride != "") 
 		{
-			Text.Text = (string)TextOverride; // workaround; I can't find a way to expose the property directly
+			Text.Text = TextOverride; // workaround; I can't find a way to expose the property directly
 		}
 		
 	}

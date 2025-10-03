@@ -1,0 +1,9 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://clbdeqbc2g11u"]
+
+[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://nk57-monospace.cdrg-bold.otf" id="1_dwjfv"]
+
+[resource]
+font = ExtResource("1_dwjfv")
+font_size = 64
+shadow_size = 4
+shadow_color = Color(0, 0, 0, 1)

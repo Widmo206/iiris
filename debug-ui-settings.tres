@@ -1,0 +1,11 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://bao85prxxo4rv"]
+
+[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://nk57-monospace.cdrg-bold.otf" id="1_2eera"]
+
+[resource]
+font = ExtResource("1_2eera")
+font_size = 64
+font_color = Color(0.93408, 0.93408, 0.93408, 1)
+outline_size = 20
+outline_color = Color(0, 0, 0, 1)
+shadow_color = Color(0, 0, 0, 1)

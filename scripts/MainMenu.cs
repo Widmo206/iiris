@@ -6,7 +6,7 @@ public partial class MainMenu : Node2D
 	public override void _Ready()
 	{
 		GD.Print("LOADED MainMenu.cs");
-		GetNode<Button>("Options/StartButton").GrabFocus();
+		GetNode<Button>("anchor1/Options/StartButton").GrabFocus();
 	}
 
 	public override void _Process(double delta)
