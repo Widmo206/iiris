@@ -41,7 +41,7 @@ public partial class Slope : Node2D
 
 	public override void _Ready()
 	{
-		// Remove all variants except the one declared specified by Slopetype
+		// Remove all variants except the one specified by Slopetype
 		// this is probably a bad way to do this, but it should be good enough
 
 		var slopeTypes = Enum.GetValues(typeof(Type));
