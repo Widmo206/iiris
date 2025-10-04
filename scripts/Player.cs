@@ -480,7 +480,6 @@ public partial class Player : CharacterBody2D
 
 		}
 
-
 		// Collision Box Handling
 		switch (currentState)
 		{

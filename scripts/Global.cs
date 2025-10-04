@@ -17,7 +17,7 @@ public partial class Global : Node
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event.IsActionPressed("open_settings"))
+		if (@event.IsActionPressed("open_settings") && GetTree().CurrentScene.Name == "Level")
 		{
 			GD.Print(optionsMenuOpen);
 			if (optionsMenuOpen)
