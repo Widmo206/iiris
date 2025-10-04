@@ -65,8 +65,9 @@ public partial class Player : CharacterBody2D
 	int dashEffectCounter		= 0;				// ticks; how long until a new dash effect "particle" can be spawned
 	int dashCounter				= 0;				// ticks; if positive: how long until the dash runs out; if negative: how much cooldown is left
 	public bool isGrounded		= false;
+	public bool dashEnabled		= true;
 	bool canWalljump			= false;
-	bool dashEnabled			= true;
+	bool canDash				= false;
 	int jumpAccumulation		= 0;				// ticks; how long the jump button has been pressed
 	int airTime					= 0;				// ticks; how long has the character spent in the air
 	int jumpBuffer				= 0;				// ticks; is a jump action buffered and how much time is left
@@ -76,7 +77,7 @@ public partial class Player : CharacterBody2D
 
 
 	// Node aliases so I don't go insane
-	Node2D				RootScene;
+	Node2D				LevelScene;
 	AnimatedSprite2D	PlayerSprite;
 	CollisionShape2D	InteractionCollider;
 	WalljumpDetector	WalljumpDetector;
@@ -156,7 +157,7 @@ public partial class Player : CharacterBody2D
 		{
 			Node2D instance = (Node2D) dashEffect.Instantiate();
 			instance.Position = Position;
-			RootScene.AddChild(instance);
+			LevelScene.AddChild(instance);
 			dashEffectCounter = DashEffectInterval;
 		}
 	}
@@ -167,12 +168,12 @@ public partial class Player : CharacterBody2D
 		//gravityAcceleration = GetGravity() / UpdatesPerSecond;
 
 		// Populate node aliases
-		RootScene			= GetTree().Root.GetChild<Node2D>(1);		// grabs the current Level scene (there's probably a more elegant/robust way to do this)
+		LevelScene			= GetNode<Node2D>("/root/Level"); // bruh this just works
 		PlayerSprite		= GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		InteractionCollider	= GetNode<CollisionShape2D>("InteractionTrigger/Collider");
 		WalljumpDetector	= GetNode<WalljumpDetector>("WalljumpDetector");
 		SlopeDetector		= GetNode<Area2D>("SlopeDetector");
-		Ground				= RootScene.GetNode<TileMapLayer>("Terrain/Ground");
+		Ground				= LevelScene.GetNode<TileMapLayer>("Terrain/Ground");
 		JumpSFX				= GetNode<AudioStreamPlayer>("JumpSfx");
 
 		StandingCollider	= GetNode<CollisionShape2D>("StandingCollider");
@@ -296,15 +297,18 @@ public partial class Player : CharacterBody2D
 		// Handle Dash
 		// dash expiring is checked at the beginning, so you can potentially start a new dash in the same tick
 		// except you can't because of cooldown
+		if (dashCounter == 0 && isGrounded) { canDash = true; }
+
 		if (Input.IsActionJustPressed("dash") && inputDirection != 0f || dashBuffer > 0)
 		{
-			if (dashCounter == 0)
+			if (canDash)
 			{
 				currentState = State.Dashing;
 				dashCounter = DashDuration;
 				velocity = new Vector2(inputDirection * DashSpeed, 0f);
 				isGrounded = false;
 				stateLockCountdown = DashDuration;
+				canDash = false;
 			}
 			else if (Input.IsActionJustPressed("dash"))
 			{

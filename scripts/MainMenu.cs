@@ -13,8 +13,8 @@ public partial class MainMenu : Node2D
 	{
 		if (!OS.HasFeature("pc"))
 		{
-			GetNode<Button>("Options/FullscreenButton").Hide();
-			GetNode<Button>("Options/ExitButton").Hide();
+			GetNode<Button>("anchor1/Options/FullscreenButton").Hide();
+			GetNode<Button>("anchor1/Options/ExitButton").Hide();
 		}
 	}
 

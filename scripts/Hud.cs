@@ -3,8 +3,8 @@ using System;
 
 public partial class Hud : CanvasLayer
 {
-	public float FPS = 0.0f;
-	public float UPS = 0.0f;
+	public float FPS = 0f;
+	public float UPS = 0f;
 
 
 	public void Level(string levelName)
@@ -23,7 +23,7 @@ public partial class Hud : CanvasLayer
 	{
 		FPS = 1 / (float)delta;
 		// TODO: Figure out how to force a precision of 2 decimal places
-		string text = "FPS: " + FPS.ToString() + "\nUPS: " + UPS.ToString();
+		string text = "FPS: " + Mathf.Round(FPS).ToString() + "\nUPS: " + Mathf.Round(UPS).ToString();
 		GetNode<Label>("FpsCounter").Text = text;
 	}
 
