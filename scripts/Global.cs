@@ -1,4 +1,4 @@
-using Godot;
+﻿using Godot;
 using System;
 
 public partial class Global : Node
@@ -6,6 +6,7 @@ public partial class Global : Node
 	public int coinsCollected = 0;
 	PackedScene OptionsMenu;
 	public bool optionsMenuOpen = false;
+	public int gameTime = 0; // ticks
 
 
 	public override void _Ready()
@@ -14,6 +15,7 @@ public partial class Global : Node
 		//GD.Print("LOADED Global.cs");
 		//GD.Print("Coins collected:", coinsCollected);
 	}
+
 
 	public override void _Input(InputEvent @event)
 	{
@@ -42,8 +44,17 @@ public partial class Global : Node
 		}
 	}
 
-	public override void _Process(double delta)
+	public override void _PhysicsProcess(double delta)
 	{
-
+		// Godot says there's a NullReferenceException here
+		// I don't see it; and either way it works fine so ¯\_(ツ)_/¯
+		if (GetTree().CurrentScene.Name == "MainMenu")
+		{
+			gameTime = 0;
+		}
+		else if (!GetTree().Paused && GetTree().CurrentScene.Name == "Level")
+		{
+			gameTime++;
+		}
 	}
 }

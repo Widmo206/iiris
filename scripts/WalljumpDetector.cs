@@ -22,7 +22,8 @@ public partial class WalljumpDetector : Node2D
 
 	public override void _Ready()
 	{
-		RootScene = GetTree().Root.GetChild<Node2D>(1);
+		//RootScene = GetTree().Root.GetChild<Node2D>(1);
+		RootScene = GetNode<Node2D>("/root/Level");
 		Ground = RootScene.GetNode<TileMapLayer>("Terrain/Ground");
 		Left = GetNode<Area2D>("Left");
 		Right = GetNode<Area2D>("Right");

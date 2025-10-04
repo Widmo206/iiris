@@ -3,7 +3,7 @@ using System;
 
 public partial class OptionsMenu : CanvasLayer
 {
-	Node2D LevelScene;
+	//Node2D LevelScene;
 	int counter = 0;
 
 
@@ -58,7 +58,7 @@ public partial class OptionsMenu : CanvasLayer
 	public void OnRestartButtonPressed()
 	{
 		GetTree().ChangeSceneToFile("res://scenes/level_2.tscn");
-		LevelScene = GetTree().Root.GetChild<Node2D>(1);
+		//LevelScene = GetTree().Root.GetChild<Node2D>(1);
 	}
 
 	public void OnFullscreenButtonPressed()

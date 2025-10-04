@@ -315,7 +315,7 @@ script = ExtResource("1_8tq0c")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -9)
 sprite_frames = SubResource("SpriteFrames_s204s")
-animation = &"slide"
+animation = &"idle"
 
 [node name="StandingCollider" type="CollisionShape2D" parent="."]
 position = Vector2(0, -8)
