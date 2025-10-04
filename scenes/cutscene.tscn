@@ -1,0 +1,193 @@
+[gd_scene load_steps=5 format=3 uid="uid://onw41dlugots"]
+
+[ext_resource type="Script" uid="uid://dwv1hqenqujxy" path="res://scripts/Cutscene.cs" id="1_a320b"]
+[ext_resource type="PackedScene" uid="uid://ob8fjmn04eo2" path="res://scenes/exposition_box.tscn" id="1_edmg7"]
+[ext_resource type="Texture2D" uid="uid://c60nvjilj7pvq" path="res://sprites/cutscene-bg.png" id="2_0sipp"]
+[ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://sign-text-settings.tres" id="3_2bm7f"]
+
+[node name="Cutscene" type="CanvasLayer"]
+script = ExtResource("1_a320b")
+NextLevel = "res://scenes/level_2.tscn"
+
+[node name="Background" type="TextureRect" parent="."]
+z_index = -1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_0sipp")
+stretch_mode = 1
+
+[node name="Control" type="Control" parent="Background"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -28.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.25, 0.25)
+
+[node name="NextPageHint" type="Label" parent="Background/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -67.5
+offset_top = -11.5
+offset_right = 67.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Press any key to continue"
+label_settings = ExtResource("3_2bm7f")
+
+[node name="Page1" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ExpositionBox1" parent="Page1" instance=ExtResource("1_edmg7")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = -200.0
+offset_bottom = -200.0
+grow_horizontal = 2
+grow_vertical = 2
+Text = "You were out, looking for materials for your next experiment, when, in the distance, you witnessed the opening of a Portal. A swirling mass of red, and gold, and all the shades between, with a black slit down the middle, like a cat's eye."
+FadeinTime = 40
+
+[node name="ExpositionBox2" parent="Page1" instance=ExtResource("1_edmg7")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+Text = "Out of it came humans. Soldiers. Scholars. They bore tools and weapons unlike any you have seen before, and rode heavy metal wagons."
+Delay = 200
+FadeinTime = 40
+
+[node name="ExpositionBox3" parent="Page1" instance=ExtResource("1_edmg7")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+Text = "You approached them, curious, friendly, foolish. You were captured. Taken through the Portal, to a fortress carved into a mountain, with walls too smooth to be stone and plated with iron."
+Delay = 400
+FadeinTime = 40
+
+[node name="ExpositionBox4" parent="Page1" instance=ExtResource("1_edmg7")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+Text = "You were thrown into a tank. The vessel was filled with liquid, red and salty, too thick to be water. As the strange solution filled your lungs, you felt your eyes grow heavy and your limbs go numb."
+Delay = 600
+FadeinTime = 40
+
+[node name="ExpositionBox5" parent="Page1" instance=ExtResource("1_edmg7")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = 200.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+Text = "You felt your consciousness slip away."
+Delay = 800
+FadeinTime = 40
+
+[node name="Page2" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ExpositionBox6" parent="Page2" instance=ExtResource("1_edmg7")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+Text = "You stir awake, the world in chaos.  The entire facility is shaken violently, as if a mountain was dropped upon it. As the ceiling cracks and crumbles, a mechanical siren joins the cacophony with its rugged, metallic shriek."
+FadeinTime = 40
+
+[node name="ExpositionBox7" parent="Page2" instance=ExtResource("1_edmg7")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+Text = "Then, a piece of debris falls onto the sleeping-vat, its alchemical solution spilling out onto the floor. With the fluid gone, your strength returns."
+Delay = 200
+FadeinTime = 40
+
+[node name="ExpositionBox8" parent="Page2" instance=ExtResource("1_edmg7")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_top = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+Text = "You open your eyes."
+Delay = 400
+FadeinTime = 40

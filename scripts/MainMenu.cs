@@ -20,7 +20,7 @@ public partial class MainMenu : Node2D
 
 	public void OnStartButtonPressed()
 	{
-		GetTree().ChangeSceneToFile("res://scenes/level_2.tscn");
+		GetTree().ChangeSceneToFile("res://scenes/cutscene.tscn");
 	}
 
 	public void OnFullscreenButtonPressed()

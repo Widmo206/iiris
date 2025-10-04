@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://ob8fjmn04eo2"]
+
+[ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://sign-text-settings.tres" id="1_3hdfs"]
+[ext_resource type="Script" uid="uid://bvasem23tqhb3" path="res://scripts/ExpositionBox.cs" id="1_mwkf6"]
+
+[node name="ExpositionBox" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+scale = Vector2(0.25, 0.25)
+script = ExtResource("1_mwkf6")
+
+[node name="Paragraph" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1024.0
+offset_top = -160.5
+offset_right = 1024.0
+offset_bottom = 160.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet.
+Lorem ipsum dolor sit amet."
+label_settings = ExtResource("1_3hdfs")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
