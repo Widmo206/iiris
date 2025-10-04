@@ -3,6 +3,7 @@ using System;
 
 public partial class Hud : CanvasLayer
 {
+	Player player;
 	public float FPS = 0f;
 	public float UPS = 0f;
 
@@ -19,19 +20,8 @@ public partial class Hud : CanvasLayer
 	}
 
 
-	public override void _Process(double delta)
+	public string getTime()
 	{
-		FPS = 1 / (float)delta;
-		// TODO: Figure out how to force a precision of 2 decimal places
-		string text = "FPS: " + Mathf.Round(FPS).ToString() + "\nUPS: " + Mathf.Round(UPS).ToString();
-		GetNode<Label>("topright/FpsCounter").Text = text;
-	}
-
-
-	public override void _PhysicsProcess(double delta)
-	{
-		UPS = 1 / (float)delta;
-
 		int timerTicks = (int)GetNode<Node>("/root/Global").Get("gameTime");
 
 		int hours = timerTicks / 72000;
@@ -45,7 +35,36 @@ public partial class Hud : CanvasLayer
 
 		int ms = timerTicks * 50;
 
-		string humanTime = $"{hours}:{minutes.ToString().PadLeft(2, '0')}:{seconds.ToString().PadLeft(2, '0')}.{ms.ToString().PadLeft(3, '0')}";
-		GetNode<Label>("topright/Timer").Text = humanTime;
+		return $"{hours}:{minutes.ToString().PadLeft(2, '0')}:{seconds.ToString().PadLeft(2, '0')}.{ms.ToString().PadLeft(3, '0')}";
 	}
+
+
+	public override void _Ready()
+	{
+		player = GetNode<Player>("/root/Level/Player");
+	}
+
+
+	private void updateHUD()
+	{
+		// update debug overlay
+		string text = "FPS: " + Mathf.Round(FPS).ToString() + "\nUPS: " + Mathf.Round(UPS).ToString();
+		GetNode<Label>("topright/FpsCounter").Text = text;
+		GetNode<Label>("topright/Timer").Text = getTime();
+
+		GetNode<Label>("PositionDisplay").Text = $"Position:\n    x: {player.Position.X}\n    y: {player.Position.Y}";
+		GetNode<Label>("VelocityDisplay").Text = $"Velocity:\n    x: {player.Velocity.X}\n    y: {player.Velocity.Y}";
+		GetNode<Label>("StateDisplay").Text = $"State: {player.currentState}\nstateLockCountdown: {player.stateLockCountdown.ToString()}";
+	}
+
+
+	public override void _Process(double delta)
+	{
+		FPS = 1 / (float)delta;
+
+		updateHUD();
+	}
+
+
+	public override void _PhysicsProcess(double delta) { UPS = 1 / (float)delta; }
 }

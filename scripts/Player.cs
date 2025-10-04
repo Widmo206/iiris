@@ -26,8 +26,8 @@ public partial class Player : CharacterBody2D
 	public const float DefaultDynamicFrictionCoefficient = 0.1f;	// determines friction when sliding;     higher coefficient => more friction
 
 	// ✧˖°. I identify as a constant ⋆˙⟡
-	readonly Vector2 gravityAcceleration = new Vector2(0f, 980f / 60f);	// ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
-																		// divided by 60 to get u / (s*t) -> u/s applied each tick
+	public readonly Vector2 gravityAcceleration = new Vector2(0f, 980f / 60f);	// ~~initialized at _Ready()~~ Initialized now because GetGravity seems to be broken
+																				// divided by 60 to get u / (s*t) -> u/s applied each tick
 
 	// Technical constants
 	//public const int MaxJumpAccumulationTime	= 6;				// ticks; how long the jump key needs to be held for a maxiumum strength jump
@@ -58,22 +58,21 @@ public partial class Player : CharacterBody2D
 		// interactions
 		Kicking,
 	}
-	public State currentState	= State.Idle;		// the player's current state
-	string currentHitbox		= "";				// which hitbox is currently enabled; only used by setHitbox to check if the requested hitbox is different from the current one
-	int stateLockCountdown		= 0;				// ticks; how long until the state can be changed again
-	// int movementLock			= 0;				// ticks; used for preventing player movement for a set time
-	int dashEffectCounter		= 0;				// ticks; how long until a new dash effect "particle" can be spawned
-	int dashCounter				= 0;				// ticks; if positive: how long until the dash runs out; if negative: how much cooldown is left
-	public bool isGrounded		= false;
-	public bool dashEnabled		= true;
-	bool canWalljump			= false;
-	bool canDash				= false;
-	int jumpAccumulation		= 0;				// ticks; how long the jump button has been pressed
-	int airTime					= 0;				// ticks; how long has the character spent in the air
-	int jumpBuffer				= 0;				// ticks; is a jump action buffered and how much time is left
-	int kickBuffer				= 0;				// ticks; is a kick action buffered and how much time is left
-	int dashBuffer				= 0;				// ticks; is a dash action buffered and how much time is left
-	int facingDirection			= 1;				// 1 = right, -1 = left
+	public State currentState			= State.Idle;	// the player's current state
+	string currentHitbox				= "";			// which hitbox is currently enabled; only used by setHitbox to check if the requested hitbox is different from the current one
+	public int stateLockCountdown		= 0;			// ticks; how long until the state can be changed again
+	public int dashEffectCounter		= 0;			// ticks; how long until a new dash effect "particle" can be spawned
+	public int dashCounter				= 0;			// ticks; if positive: how long until the dash runs out; if negative: how much cooldown is left
+	public int jumpAccumulation			= 0;			// ticks; how long the jump button has been pressed
+	public int airTime					= 0;			// ticks; how long has the character spent in the air
+	public int jumpBuffer				= 0;			// ticks; is a jump action buffered and how much time is left
+	public int kickBuffer				= 0;			// ticks; is a kick action buffered and how much time is left
+	public int dashBuffer				= 0;			// ticks; is a dash action buffered and how much time is left
+	public int facingDirection			= 1;			// 1 = right, -1 = left
+	public bool isGrounded = false;
+	public bool dashEnabled = true;
+	public bool canWalljump = false;
+	public bool canDash = false;
 
 
 	// Node aliases so I don't go insane
@@ -117,6 +116,8 @@ public partial class Player : CharacterBody2D
 	{
 		// don't bother the nodes if there's no need to change anything
 		if (hitbox == currentHitbox) { return; }
+
+		// TODO: implement checks foe whether a collider change is valid -> may fall through world otherwise
 
 		currentHitbox = hitbox;
 		switch (hitbox)
@@ -604,12 +605,6 @@ public partial class Player : CharacterBody2D
 		else if (dashCounter < 0)	{ dashCounter++; }
 
 		if (dashBuffer > 0)			{ dashBuffer--; }
-
-
-		// update debug overlay
-		GetNode<Label>("../HUD/PositionDisplay").Text = $"Position:\n    x: {Position.X}\n    y: {Position.Y}";
-		GetNode<Label>("../HUD/VelocityDisplay").Text = $"Velocity:\n    x: {Velocity.X}\n    y: {Velocity.Y}";
-		GetNode<Label>("../HUD/StateDisplay").Text    = $"State: {currentState}\nstateLockCountdown: {stateLockCountdown.ToString()}\njumpAccumulation: {jumpAccumulation}";
 
 
 		// non-debug UI management
