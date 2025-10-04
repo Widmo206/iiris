@@ -161,7 +161,7 @@ offset_top = -100.0
 offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
-Text = "You stir awake, the world in chaos.  The entire facility is shaken violently, as if a mountain was dropped upon it. As the ceiling cracks and crumbles, a mechanical siren joins the cacophony with its rugged, metallic shriek."
+Text = "You stir awake, the world in chaos.  The entire facility is shaken violently, as if a mountain were dropped upon it. As the ceiling cracks and crumbles, a mechanical siren joins the cacophony with its rugged, metallic shriek."
 FadeinTime = 40
 
 [node name="ExpositionBox7" parent="Page2" instance=ExtResource("1_edmg7")]
