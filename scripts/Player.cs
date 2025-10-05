@@ -345,7 +345,7 @@ public partial class Player : CharacterBody2D
 
 		// Check for walljumping
 		WalljumpDetector.CheckWalljump();
-		canWalljump = WalljumpDetector.canWalljump;
+		canWalljump = WalljumpDetector.canWalljump && !Input.IsActionPressed("crouch");
 
 		if (!Input.IsActionPressed("jump") && currentState == State.Jumping /*&& velocity.Y < 0f*/)
 		{
