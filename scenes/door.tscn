@@ -22,7 +22,7 @@ animations = [{
 }]
 
 [node name="Door" type="Area2D"]
-collision_layer = 2
+collision_layer = 0
 collision_mask = 2
 script = ExtResource("1_en765")
 
@@ -33,4 +33,3 @@ shape = SubResource("RectangleShape2D_0nd05")
 sprite_frames = SubResource("SpriteFrames_f5i3v")
 
 [connection signal="body_entered" from="." to="." method="OnBodyEntered"]
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]

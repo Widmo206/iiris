@@ -7,7 +7,7 @@
 
 [node name="Cutscene" type="CanvasLayer"]
 script = ExtResource("1_a320b")
-NextLevel = "res://scenes/level_2.tscn"
+NextLevel = "res://scenes/level_1.tscn"
 
 [node name="Background" type="TextureRect" parent="."]
 z_index = -1
