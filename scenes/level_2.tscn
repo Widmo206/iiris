@@ -60,7 +60,7 @@ tile_set = SubResource("TileSet_g0tby")
 
 [node name="Player" parent="." instance=ExtResource("4_hey2k")]
 z_index = 2
-position = Vector2(1071, 360)
+position = Vector2(1068, 360)
 
 [node name="Terrain" type="Node" parent="."]
 

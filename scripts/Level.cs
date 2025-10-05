@@ -5,6 +5,8 @@ public partial class Level : Node2D
 {
 	[Export]
 	public string LevelName { get; set; } = "Lorem ipsum";
+	[Export]
+	public int VoidHeight { get; set; } = 2400; // lower boundry of the world; the player dies if they cross it
 
 
 	public int autoReloadTime = 200; // ticks; how long between player death and the level automatically reloading

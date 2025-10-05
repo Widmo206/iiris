@@ -59,7 +59,7 @@ public partial class Player : CharacterBody2D
 		// interactions
 		Kicking,
 	}
-	public bool isAlive = true;
+	public int VoidHeight;								// lower boundry of the world; the player dies if they cross it
 	public State currentState			= State.Idle;	// the player's current state
 	string currentHitbox				= "";			// which hitbox is currently enabled; only used by setHitbox to check if the requested hitbox is different from the current one
 	public int stateLockCountdown		= 0;			// ticks; how long until the state can be changed again
@@ -71,10 +71,11 @@ public partial class Player : CharacterBody2D
 	public int kickBuffer				= 0;			// ticks; is a kick action buffered and how much time is left
 	public int dashBuffer				= 0;			// ticks; is a dash action buffered and how much time is left
 	public int facingDirection			= 1;			// 1 = right, -1 = left
-	public bool isGrounded = false;
-	public bool dashEnabled = true;
-	public bool canWalljump = false;
-	public bool canDash = false;
+	public bool isAlive					= true;
+	public bool isGrounded				= false;
+	public bool dashEnabled				= true;
+	public bool canWalljump				= false;
+	public bool canDash					= false;
 
 
 	// Node aliases so I don't go insane
@@ -175,7 +176,7 @@ public partial class Player : CharacterBody2D
 		//gravityAcceleration = GetGravity() / UpdatesPerSecond;
 
 		// Populate node aliases
-		LevelScene			= GetNode<Node2D>("/root/Level"); // bruh this just works
+		LevelScene			= GetNode<Level>("/root/Level"); // bruh this just works
 		PlayerSprite		= GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 		InteractionCollider	= GetNode<CollisionShape2D>("InteractionTrigger/Collider");
 		WalljumpDetector	= GetNode<WalljumpDetector>("WalljumpDetector");
@@ -188,11 +189,15 @@ public partial class Player : CharacterBody2D
 		CrouchingCollider	= GetNode<CollisionShape2D>("CrouchingCollider");
 		DashingCollider		= GetNode<CollisionShape2D>("DashingCollider");
 
-		dashEffect = GD.Load<PackedScene>("res://scenes/dash_effect.tscn");
+
+		// other resources
+		dashEffect			= GD.Load<PackedScene>("res://scenes/dash_effect.tscn");
+		VoidHeight			= (int)LevelScene.Get("VoidHeight");
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
+		Vector2 position = Position;
 		Vector2 velocity = Velocity;
 		isGrounded = IsOnFloor();
 
@@ -259,7 +264,7 @@ public partial class Player : CharacterBody2D
 
 
 		// Handle damage
-		if (DamageDetector.HasOverlappingBodies())
+		if (DamageDetector.HasOverlappingBodies() || position.Y > VoidHeight)
 		{
 			isAlive = false;
 			currentState = State.Dead;
