@@ -105,10 +105,6 @@ SlopeType = 4
 position = Vector2(1656, 432)
 SlopeType = 4
 
-[node name="Slope5" parent="Terrain/Slopes" instance=ExtResource("7_una4e")]
-position = Vector2(1684, 1184)
-SlopeType = 5
-
 [node name="Slope2" parent="Terrain/Slopes" instance=ExtResource("7_una4e")]
 position = Vector2(1800, 360)
 SlopeType = 0
