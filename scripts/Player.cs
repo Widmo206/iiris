@@ -47,6 +47,7 @@ public partial class Player : CharacterBody2D
 		// stationary
 		Idle,
 		Crouching,
+		Dead,
 		// moving
 		Walking,
 		Running,
@@ -58,6 +59,7 @@ public partial class Player : CharacterBody2D
 		// interactions
 		Kicking,
 	}
+	public bool isAlive = true;
 	public State currentState			= State.Idle;	// the player's current state
 	string currentHitbox				= "";			// which hitbox is currently enabled; only used by setHitbox to check if the requested hitbox is different from the current one
 	public int stateLockCountdown		= 0;			// ticks; how long until the state can be changed again
@@ -80,6 +82,7 @@ public partial class Player : CharacterBody2D
 	AnimatedSprite2D	PlayerSprite;
 	CollisionShape2D	InteractionCollider;
 	WalljumpDetector	WalljumpDetector;
+	Area2D				DamageDetector;
 	Area2D				SlopeDetector;
 	TileMapLayer		Ground;
 	AudioStreamPlayer	JumpSFX;
@@ -109,7 +112,10 @@ public partial class Player : CharacterBody2D
 
 	private void setAnimation(string animation)
 	{
-		PlayerSprite.Play(animation);
+		if (PlayerSprite.Animation != animation)
+		{
+			PlayerSprite.Play(animation);
+		}
 	}
 
 	private void setHitbox(string hitbox)
@@ -174,6 +180,7 @@ public partial class Player : CharacterBody2D
 		InteractionCollider	= GetNode<CollisionShape2D>("InteractionTrigger/Collider");
 		WalljumpDetector	= GetNode<WalljumpDetector>("WalljumpDetector");
 		SlopeDetector		= GetNode<Area2D>("SlopeDetector");
+		DamageDetector		= GetNode<Area2D>("DamageDetector");
 		Ground				= LevelScene.GetNode<TileMapLayer>("Terrain/Ground");
 		JumpSFX				= GetNode<AudioStreamPlayer>("JumpSfx");
 
@@ -251,8 +258,16 @@ public partial class Player : CharacterBody2D
 		}
 
 
+		// Handle damage
+		if (DamageDetector.HasOverlappingBodies())
+		{
+			isAlive = false;
+			currentState = State.Dead;
+		}
+
+
 		// Handle Interaction
-		if (Input.IsActionJustPressed("interact") || kickBuffer > 0)
+		if ((Input.IsActionJustPressed("interact") || kickBuffer > 0) && isAlive)
 		{
 			if (isGrounded && isntStateLocked())
 			{
@@ -278,7 +293,7 @@ public partial class Player : CharacterBody2D
 
 		// Handle Directional Actions
 		float inputDirection = 0f;
-		if (isntStateLocked())
+		if (isntStateLocked() && isAlive)
 		{
 			inputDirection = Input.GetAxis("move_left", "move_right");
 		}
@@ -300,7 +315,7 @@ public partial class Player : CharacterBody2D
 		// except you can't because of cooldown
 		if (dashCounter == 0 && isGrounded) { canDash = true; }
 
-		if (Input.IsActionJustPressed("dash") && inputDirection != 0f || dashBuffer > 0)
+		if ((Input.IsActionJustPressed("dash") && inputDirection != 0f || dashBuffer > 0) && isAlive)
 		{
 			if (canDash)
 			{
@@ -333,7 +348,7 @@ public partial class Player : CharacterBody2D
 			velocity.Y *= JumpDecay;
 		}
 
-		if (Input.IsActionJustPressed("jump") || jumpBuffer > 0)
+		if ((Input.IsActionJustPressed("jump") || jumpBuffer > 0) && isAlive)
 		{
 			//GD.Print("traying to jump");
 			float JumpVelocity = JumpMomentum / Mass;
@@ -412,7 +427,7 @@ public partial class Player : CharacterBody2D
 		}
 
 		// Sliding
-		if (isntStateLocked())
+		if (isntStateLocked() && isAlive)
 		{
 			if (Mathf.Abs(velocity.X) > 1.25f * BaseSpeed && isGrounded && Input.IsActionPressed("crouch") ||
 				Mathf.Abs(velocity.X) > 2f * BaseSpeed && isGrounded)
@@ -428,7 +443,7 @@ public partial class Player : CharacterBody2D
 		else if (inputDirection == 0f)
 		{
 			velocity.X += decelerationFriction;
-			if (isGrounded && isntStateLocked())
+			if (isGrounded && isntStateLocked() && isAlive)
 			{
 				if (Input.IsActionPressed("crouch"))
 				{ currentState = State.Crouching; }
@@ -492,6 +507,10 @@ public partial class Player : CharacterBody2D
 				setHitbox("crouching");
 				break;
 
+			case State.Dead:
+				setHitbox("crouching");
+				break;
+
 			case State.Kicking:
 				setHitbox("standing");
 				break;
@@ -531,6 +550,7 @@ public partial class Player : CharacterBody2D
 		}
 
 
+		if (!isAlive) { currentState = State.Dead; } // just in case
 		// Animation Handling
 		switch (currentState)
 		{
@@ -540,6 +560,10 @@ public partial class Player : CharacterBody2D
 
 			case State.Crouching:
 				setAnimation("crouched");
+				break;
+
+			case State.Dead:
+				setAnimation("die");
 				break;
 
 			case State.Kicking:

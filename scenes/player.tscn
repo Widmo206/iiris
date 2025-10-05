@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://dv16mjenwd7rn"]
+[gd_scene load_steps=48 format=3 uid="uid://dv16mjenwd7rn"]
 
 [ext_resource type="Script" uid="uid://d5ha03kt30lg" path="res://scripts/Player.cs" id="1_8tq0c"]
 [ext_resource type="Texture2D" uid="uid://cjp6353do2nsq" path="res://sprites/DinoSprites - vita.png" id="2_fuuox"]
@@ -15,6 +15,22 @@ region = Rect2(408, 0, 24, 24)
 [sub_resource type="AtlasTexture" id="AtlasTexture_d2wvv"]
 atlas = ExtResource("2_fuuox")
 region = Rect2(504, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jej6c"]
+atlas = ExtResource("2_fuuox")
+region = Rect2(336, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f1ej7"]
+atlas = ExtResource("2_fuuox")
+region = Rect2(360, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oprun"]
+atlas = ExtResource("2_fuuox")
+region = Rect2(384, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8ls1"]
+atlas = ExtResource("2_fuuox")
+region = Rect2(624, 0, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ur7pv"]
 atlas = ExtResource("2_fuuox")
@@ -141,6 +157,23 @@ animations = [{
 "loop": true,
 "name": &"dash",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jej6c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f1ej7")
+}, {
+"duration": 3.0,
+"texture": SubResource("AtlasTexture_oprun")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a8ls1")
+}],
+"loop": false,
+"name": &"die",
+"speed": 12.0
 }, {
 "frames": [{
 "duration": 2.0,
@@ -315,7 +348,8 @@ script = ExtResource("1_8tq0c")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -9)
 sprite_frames = SubResource("SpriteFrames_s204s")
-animation = &"idle"
+animation = &"die"
+autoplay = "idle"
 
 [node name="StandingCollider" type="CollisionShape2D" parent="."]
 position = Vector2(0, -8)
@@ -399,3 +433,12 @@ collision_mask = 8
 [node name="Collider" type="CollisionShape2D" parent="SlopeDetector"]
 position = Vector2(0, -8)
 shape = SubResource("CircleShape2D_fjrip")
+
+[node name="DamageDetector" type="Area2D" parent="."]
+visible = false
+collision_layer = 0
+collision_mask = 32
+
+[node name="Collider" type="CollisionShape2D" parent="DamageDetector"]
+position = Vector2(0, -8)
+shape = SubResource("CapsuleShape2D_jogtl")
