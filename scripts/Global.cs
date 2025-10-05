@@ -46,8 +46,8 @@ public partial class Global : Node
 
 	public override void _PhysicsProcess(double delta)
 	{
-		// Godot says there's a NullReferenceException here
-		// I don't see it; and either way it works fine so ¯\_(ツ)_/¯
+		if (GetTree().CurrentScene == null) return; // NullReferenceException fix
+
 		if (GetTree().CurrentScene.Name == "MainMenu")
 		{
 			gameTime = 0;
