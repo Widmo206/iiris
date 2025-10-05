@@ -3,6 +3,9 @@ using System;
 
 public partial class Collectible : Area2D
 {
+	Random random = new Random();
+	bool isExhausted = false;
+
 	public override void _Ready()
 	{
 		//GD.Print("LOADED Collectible.cs");
@@ -14,18 +17,18 @@ public partial class Collectible : Area2D
 
 	public void OnBodyEntered(Node2D collidingEntity)
 	{
-		//GD.Print("Detected Player!");
+		if (isExhausted) return;
 
-		// TODO: update this when global.gd gets rewritten
-		int coinsCollected = (int)GetNode("/root/Global").Get("coinsCollected");
-		coinsCollected++;
-		GetNode("/root/Global").Set("coinsCollected", (Variant)coinsCollected);
+		// coin collection is handled by the Level
+		//int coinsCollected = (int)GetNode("/root/Global").Get("coinsCollected");
+		//coinsCollected++;
+		//GetNode("/root/Global").Set("coinsCollected", (Variant)coinsCollected);
 
-		var rand = new Random();
-		// Why didn't I add the random pitch earlier? 
-		GetNode<AudioStreamPlayer>("CoinPickupSfx").PitchScale = 1.0f + ((float)rand.NextDouble() - 0.5f) * 0.1f;
-		GetNode<AudioStreamPlayer>("CoinPickupSfx").Play();
 		EmitSignal(SignalName.CoinCollected);
+		isExhausted = true;
+		// Why didn't I add the random pitch earlier? 
+		GetNode<AudioStreamPlayer>("CoinPickupSfx").PitchScale = 1f + ((float)random.NextDouble() - 0.5f) * 0.1f;
+		GetNode<AudioStreamPlayer>("CoinPickupSfx").Play();
 		Hide();
 	}
 
