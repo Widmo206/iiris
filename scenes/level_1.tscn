@@ -65,7 +65,7 @@ position = Vector2(588, 432)
 
 [node name="Door" parent="." instance=ExtResource("3_fgvtr")]
 position = Vector2(1872, 328)
-Level = "res://scenes/the_end.tscn"
+Level = "res://scenes/level_2.tscn"
 
 [node name="Terrain" type="Node" parent="."]
 
