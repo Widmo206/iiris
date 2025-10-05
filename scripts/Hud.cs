@@ -22,20 +22,7 @@ public partial class Hud : CanvasLayer
 
 	public string getTime()
 	{
-		int timerTicks = (int)GetNode<Node>("/root/Global").Get("gameTime");
-
-		int hours = timerTicks / 72000;
-		timerTicks = timerTicks % 72000;
-
-		int minutes = timerTicks / 1200;
-		timerTicks = timerTicks % 1200;
-
-		int seconds = timerTicks / 20;
-		timerTicks = timerTicks % 20;
-
-		int ms = timerTicks * 50;
-
-		return $"{hours}:{minutes.ToString().PadLeft(2, '0')}:{seconds.ToString().PadLeft(2, '0')}.{ms.ToString().PadLeft(3, '0')}";
+		return (string)GetNode<Node>("/root/Global").Call("getFormattedtime");
 	}
 
 

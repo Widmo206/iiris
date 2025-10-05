@@ -58,6 +58,7 @@ public partial class OptionsMenu : CanvasLayer
 	public void OnRestartButtonPressed()
 	{
 		GetTree().ChangeSceneToFile("res://scenes/level_2.tscn");
+		closeSettings();
 		//LevelScene = GetTree().Root.GetChild<Node2D>(1);
 	}
 
