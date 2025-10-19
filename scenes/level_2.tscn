@@ -167,12 +167,8 @@ position = Vector2(1632, 16)
 [node name="Collectible12" parent="Collectibles" instance=ExtResource("9_7qsfm")]
 position = Vector2(1764, -40)
 
-[node name="Collectible5" parent="Collectibles" instance=ExtResource("9_7qsfm")]
-visible = false
-position = Vector2(320, 608)
-
 [node name="Collectible6" parent="Collectibles" instance=ExtResource("9_7qsfm")]
-position = Vector2(1024, 440)
+position = Vector2(1020, 440)
 
 [node name="Collectible10" parent="Collectibles" instance=ExtResource("9_7qsfm")]
 visible = false
