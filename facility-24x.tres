@@ -1,7 +1,7 @@
 [gd_resource type="TileSet" load_steps=7 format=3 uid="uid://laxma6rveto2"]
 
 [ext_resource type="Texture2D" uid="uid://yadcujfpra0q" path="res://sprites/terrain-metal-24x.png" id="1_6wfaa"]
-[ext_resource type="Shader" uid="uid://csfgmyl7378ql" path="res://acid.tres" id="2_7dt8m"]
+[ext_resource type="Shader" uid="uid://dgvmrv7s0far7" path="res://acid_surface.gdshader" id="2_7dt8m"]
 [ext_resource type="Texture2D" uid="uid://dereyehyfgh8y" path="res://sprites/terrain-nature-24x.png" id="2_vmuw4"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4gjkw"]
@@ -970,6 +970,7 @@ texture_region_size = Vector2i(24, 24)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dwkmr"]
 shader = ExtResource("2_7dt8m")
+shader_parameter/node_size = Vector2(400, 400)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x2xdu"]
 texture = ExtResource("2_vmuw4")
