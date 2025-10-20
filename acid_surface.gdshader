@@ -1,6 +1,17 @@
 shader_type canvas_item;
 render_mode blend_mix, world_vertex_coords;
 
+// Colors
+uniform vec4 foamColor  = vec4(0.984314, 1.000000, 0.525490, 1.000000);
+uniform vec4 fluidColor = vec4(0.840693, 0.880000, 0.290400, 0.750000);
+
+// Math stuff
+uniform float xFactor = 6.283185; // 2 * PI
+uniform float yOffset = -0.7;
+uniform float waveHeightFactor = 0.05;
+uniform float surfaceThickness = 1.0;
+
+
 // credit: afk on godotshaders.com
 // https://godotshaders.com/shader/tilemap-cell-uv/
 const float tile_size = 1.0 / 24.0;
@@ -31,14 +42,6 @@ void fragment() {
 	COLOR = vec4(full_uv.x, cell_uv.y, 0.0, 1.0);
 	
 	// rest is mine
-	float xFactor = 2.0 * PI;
-	float yOffset = -0.7;
-	float waveHeightFactor = 0.05;
-	float surfaceThickness = 1.0;
-	
-	// Colors
-	vec4 foamColor  = vec4(0.984314, 1.000000, 0.525490, 1.000000);
-	vec4 fluidColor = vec4(0.840693, 0.880000, 0.290400, 0.750000);
 	
 	// ~waves~
 	float height = cell_uv.y + yOffset;

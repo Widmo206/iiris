@@ -970,6 +970,12 @@ texture_region_size = Vector2i(24, 24)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dwkmr"]
 shader = ExtResource("2_7dt8m")
+shader_parameter/foamColor = Vector4(0.984314, 1, 0.52549, 1)
+shader_parameter/fluidColor = Vector4(0.840693, 0.88, 0.2904, 0.75)
+shader_parameter/xFactor = 2.0
+shader_parameter/yOffset = -0.7
+shader_parameter/waveHeightFactor = 0.05
+shader_parameter/surfaceThickness = 1.0
 shader_parameter/node_size = Vector2(400, 400)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_x2xdu"]
