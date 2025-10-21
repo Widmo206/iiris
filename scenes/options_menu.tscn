@@ -1,8 +1,8 @@
 [gd_scene load_steps=11 format=4 uid="uid://b1p34yutc5cgn"]
 
 [ext_resource type="Script" uid="uid://d0htvgiemej6f" path="res://scripts/OptionsMenu.cs" id="1_lfjc7"]
-[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://nk57-monospace.cdrg-bold.otf" id="2_3xsyx"]
-[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://debug-ui-settings.tres" id="3_dhn0l"]
+[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://other/nk57-monospace.cdrg-bold.otf" id="2_3xsyx"]
+[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://other/debug-ui-settings.tres" id="3_dhn0l"]
 [ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="4_k61yy"]
 [ext_resource type="Texture2D" uid="uid://b6ua68et8jyld" path="res://sprites/kenney-rock-tilemap.png" id="5_3xsyx"]
 

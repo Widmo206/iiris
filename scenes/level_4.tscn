@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="3_7ewpb"]
 [ext_resource type="PackedScene" uid="uid://dv16mjenwd7rn" path="res://scenes/player.tscn" id="4_py6g0"]
 [ext_resource type="PackedScene" uid="uid://db7xefnkc1u2y" path="res://scenes/door.tscn" id="5_g31h8"]
-[ext_resource type="TileSet" uid="uid://laxma6rveto2" path="res://facility-24x.tres" id="6_hy5x3"]
+[ext_resource type="TileSet" uid="uid://laxma6rveto2" path="res://other/facility-24x.tres" id="6_hy5x3"]
 [ext_resource type="PackedScene" uid="uid://d0dhhyr1fbx55" path="res://scenes/slope.tscn" id="7_dmmei"]
 [ext_resource type="PackedScene" uid="uid://cx38yscwjfjn7" path="res://scenes/sign.tscn" id="8_bee8o"]
 [ext_resource type="PackedScene" uid="uid://btimyafuh6u0b" path="res://scenes/collectible.tscn" id="9_y88yj"]

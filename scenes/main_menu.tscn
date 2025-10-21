@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://nuiac7uthg14" path="res://scripts/MainMenu.cs" id="1_4cvkl"]
 [ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="1_sl7id"]
-[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://nk57-monospace.cdrg-bold.otf" id="2_wu84c"]
-[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://debug-ui-settings.tres" id="3_8ln24"]
+[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://other/nk57-monospace.cdrg-bold.otf" id="2_wu84c"]
+[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://other/debug-ui-settings.tres" id="3_8ln24"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rtw2f"]
 font = ExtResource("2_wu84c")

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dwv1hqenqujxy" path="res://scripts/Cutscene.cs" id="1_a320b"]
 [ext_resource type="PackedScene" uid="uid://ob8fjmn04eo2" path="res://scenes/exposition_box.tscn" id="1_edmg7"]
 [ext_resource type="Texture2D" uid="uid://c60nvjilj7pvq" path="res://sprites/cutscene-bg.png" id="2_0sipp"]
-[ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://sign-text-settings.tres" id="3_2bm7f"]
+[ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://other/sign-text-settings.tres" id="3_2bm7f"]
 
 [node name="Cutscene" type="CanvasLayer"]
 script = ExtResource("1_a320b")

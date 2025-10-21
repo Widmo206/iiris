@@ -1,8 +1,8 @@
 [gd_scene load_steps=9 format=4 uid="uid://dri47drqy341u"]
 
 [ext_resource type="Script" uid="uid://bm5gv4xs1lrte" path="res://scripts/TheEnd.cs" id="1_2jfs8"]
-[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://nk57-monospace.cdrg-bold.otf" id="2_fpimk"]
-[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://debug-ui-settings.tres" id="3_pugnu"]
+[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://other/nk57-monospace.cdrg-bold.otf" id="2_fpimk"]
+[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://other/debug-ui-settings.tres" id="3_pugnu"]
 [ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="4_fhtex"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rtw2f"]

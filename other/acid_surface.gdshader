@@ -20,7 +20,7 @@ vec2 get_cell_uv(vec2 uv, vec2 pixel_size) {
 	// No idea why I need these weird offsets; they weren't in the original code
 	ut.x = mod(1.0 - uv.x + 0.20193, pixel_size.x / tile_size) / pixel_size.x * tile_size;
 	ut.y = mod(1.0 - uv.y + 0.20962, pixel_size.y / tile_size) / pixel_size.y * tile_size;
-	
+
 	return ut;
 }
 
@@ -36,20 +36,20 @@ void vertex(){
 void fragment() {
 	// credit: blaze_the_star on godot forums
 	vec2 full_uv = vert/node_size;
-	
+
 	// credit: afk on godotshaders.com
 	vec2 cell_uv = get_cell_uv(UV, TEXTURE_PIXEL_SIZE);
 	//COLOR = vec4(full_uv.x, cell_uv.y, 0.0, 1.0);
-	
+
 	// rest is mine
-	
+
 	// ~waves~
 	float height = cell_uv.y + yOffset;
 	height += sin( TIME + full_uv.x * xFactor) * waveHeightFactor;
 	height += sin( TIME + full_uv.x * xFactor * 2.0 + 1.25) * waveHeightFactor * 0.5;
 	height += sin(-TIME + full_uv.x * xFactor * 3.0 + 2.12) * waveHeightFactor * 0.25;
 	height += sin(-TIME + full_uv.x * xFactor * 5.0 + 0.73) * waveHeightFactor * 0.125;
-	
+
 	// the 0.02 is just a magic number; no idea what it depends on
 	if(abs(height) < 0.02 * surfaceThickness)
 	{

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ob8fjmn04eo2"]
 
-[ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://sign-text-settings.tres" id="1_3hdfs"]
+[ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://other/sign-text-settings.tres" id="1_3hdfs"]
 [ext_resource type="Script" uid="uid://bvasem23tqhb3" path="res://scripts/ExpositionBox.cs" id="1_mwkf6"]
 
 [node name="ExpositionBox" type="Control"]

@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://dpj4c2gw6un85"
-path="res://.godot/imported/nk57-monospace.cdrg-bold.otf-9038a3639bb4538a225a6ccadf29ab30.fontdata"
+path="res://.godot/imported/nk57-monospace.cdrg-bold.otf-32795ae2d524040914b565e3c1f430a1.fontdata"
 
 [deps]
 
-source_file="res://nk57-monospace.cdrg-bold.otf"
-dest_files=["res://.godot/imported/nk57-monospace.cdrg-bold.otf-9038a3639bb4538a225a6ccadf29ab30.fontdata"]
+source_file="res://other/nk57-monospace.cdrg-bold.otf"
+dest_files=["res://.godot/imported/nk57-monospace.cdrg-bold.otf-32795ae2d524040914b565e3c1f430a1.fontdata"]
 
 [params]
 

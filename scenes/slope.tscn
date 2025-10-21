@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://d0dhhyr1fbx55"]
 
 [ext_resource type="Script" uid="uid://b7nm7nmm0r6xv" path="res://scripts/Slope.cs" id="1_hqijj"]
-[ext_resource type="TileSet" uid="uid://laxma6rveto2" path="res://facility-24x.tres" id="1_jcoxn"]
+[ext_resource type="TileSet" uid="uid://laxma6rveto2" path="res://other/facility-24x.tres" id="1_jcoxn"]
 
 [node name="Slope" type="Node2D"]
 script = ExtResource("1_hqijj")

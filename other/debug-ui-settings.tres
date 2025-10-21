@@ -1,6 +1,6 @@
 [gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://bao85prxxo4rv"]
 
-[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://nk57-monospace.cdrg-bold.otf" id="1_2eera"]
+[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://other/nk57-monospace.cdrg-bold.otf" id="1_2eera"]
 
 [resource]
 font = ExtResource("1_2eera")

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cdkfv6fox1rji"]
 
 [ext_resource type="Script" uid="uid://m761eoke41j3" path="res://scripts/Hud.cs" id="1_ahhtf"]
-[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://debug-ui-settings.tres" id="3_6fi6k"]
+[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://other/debug-ui-settings.tres" id="3_6fi6k"]
 
 [node name="HUD" type="CanvasLayer"]
 process_mode = 3
