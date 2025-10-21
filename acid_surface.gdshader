@@ -39,7 +39,7 @@ void fragment() {
 	
 	// credit: afk on godotshaders.com
 	vec2 cell_uv = get_cell_uv(UV, TEXTURE_PIXEL_SIZE);
-	COLOR = vec4(full_uv.x, cell_uv.y, 0.0, 1.0);
+	//COLOR = vec4(full_uv.x, cell_uv.y, 0.0, 1.0);
 	
 	// rest is mine
 	

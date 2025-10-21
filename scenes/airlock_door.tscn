@@ -1,0 +1,121 @@
+[gd_scene load_steps=16 format=3 uid="uid://etxsm354qhno"]
+
+[ext_resource type="Texture2D" uid="uid://bsqh321jxj16w" path="res://sprites/airlock-gear.png" id="1_e8yp8"]
+[ext_resource type="Script" uid="uid://bhpnkrfqfr1y8" path="res://scripts/AirlockDoor.cs" id="1_ksnak"]
+[ext_resource type="Texture2D" uid="uid://p4nhh5qqek5n" path="res://sprites/airlock-rail.png" id="1_rora2"]
+[ext_resource type="Texture2D" uid="uid://cytgjay8k1j5q" path="res://sprites/airlock-door.png" id="3_ksnak"]
+[ext_resource type="Texture2D" uid="uid://cno04gh2dwx4d" path="res://sprites/airlock-overlay.png" id="4_ngguo"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pj1lg"]
+atlas = ExtResource("1_e8yp8")
+region = Rect2(24, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rora2"]
+atlas = ExtResource("1_e8yp8")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jfn2x"]
+atlas = ExtResource("1_e8yp8")
+region = Rect2(36, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ngguo"]
+atlas = ExtResource("1_e8yp8")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wnnor"]
+atlas = ExtResource("1_e8yp8")
+region = Rect2(24, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ksnak"]
+atlas = ExtResource("1_e8yp8")
+region = Rect2(0, 0, 12, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3gsy0"]
+atlas = ExtResource("1_e8yp8")
+region = Rect2(0, 0, 12, 12)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6w07i"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pj1lg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rora2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jfn2x")
+}],
+"loop": true,
+"name": &"spinning_left",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ngguo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wnnor")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ksnak")
+}],
+"loop": true,
+"name": &"spinning_right",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3gsy0")
+}],
+"loop": true,
+"name": &"stopped",
+"speed": 1.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wnnor"]
+size = Vector2(10, 77)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rora2"]
+size = Vector2(24, 8)
+
+[node name="AirlockDoor" type="StaticBody2D"]
+script = ExtResource("1_ksnak")
+
+[node name="Rail" type="Sprite2D" parent="."]
+position = Vector2(0, -36)
+texture = ExtResource("1_rora2")
+
+[node name="GearL" type="AnimatedSprite2D" parent="."]
+position = Vector2(-7, -68)
+sprite_frames = SubResource("SpriteFrames_6w07i")
+animation = &"stopped"
+frame_progress = 0.312115
+
+[node name="GearR" type="AnimatedSprite2D" parent="."]
+position = Vector2(7, -68)
+sprite_frames = SubResource("SpriteFrames_6w07i")
+animation = &"stopped"
+
+[node name="Door" type="AnimatableBody2D" parent="."]
+position = Vector2(0, -2)
+
+[node name="Door" type="Sprite2D" parent="Door"]
+position = Vector2(0, -38)
+texture = ExtResource("3_ksnak")
+
+[node name="Collider" type="CollisionShape2D" parent="Door"]
+position = Vector2(0, -38.5)
+shape = SubResource("RectangleShape2D_wnnor")
+
+[node name="Overlay" type="Sprite2D" parent="."]
+z_index = 2
+position = Vector2(0, -36)
+texture = ExtResource("4_ngguo")
+
+[node name="ColliderBottom" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-8, -2, -12, 0, -12, 6, 12, 6, 12, 0, 8, -2)
+
+[node name="ColliderTop" type="CollisionShape2D" parent="."]
+position = Vector2(0, -74)
+shape = SubResource("RectangleShape2D_rora2")
