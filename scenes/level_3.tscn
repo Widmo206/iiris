@@ -1,8 +1,9 @@
-[gd_scene load_steps=39 format=4 uid="uid://dqvdvx53eyycg"]
+[gd_scene load_steps=40 format=4 uid="uid://dqvdvx53eyycg"]
 
 [ext_resource type="Script" uid="uid://10uxc3y0kuvf" path="res://scripts/Level.cs" id="1_vcx5n"]
 [ext_resource type="PackedScene" uid="uid://cdkfv6fox1rji" path="res://scenes/hud.tscn" id="2_56dhn"]
 [ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="3_ax3dk"]
+[ext_resource type="AudioStream" uid="uid://chlh7ggo3tuit" path="res://sounds/facility-ambient.mp3" id="3_q2dsb"]
 [ext_resource type="PackedScene" uid="uid://dv16mjenwd7rn" path="res://scenes/player.tscn" id="4_q2dsb"]
 [ext_resource type="PackedScene" uid="uid://db7xefnkc1u2y" path="res://scenes/door.tscn" id="5_p3r0x"]
 [ext_resource type="TileSet" uid="uid://laxma6rveto2" path="res://other/facility-24x.tres" id="6_5xqnf"]
@@ -295,6 +296,14 @@ shader = SubResource("VisualShader_vcx5n")
 [node name="Level" type="Node2D"]
 script = ExtResource("1_vcx5n")
 
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_q7pjq")
+
+[node name="Ambiance" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_q2dsb")
+autoplay = true
+parameters/looping = true
+
 [node name="HUD" parent="." instance=ExtResource("2_56dhn")]
 
 [node name="Background" type="CanvasLayer" parent="."]
@@ -463,8 +472,5 @@ position = Vector2(948, 400)
 
 [node name="Collectible13" parent="Collectibles" instance=ExtResource("9_8uepa")]
 position = Vector2(1452, 392)
-
-[node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("10_q7pjq")
 
 [connection signal="PlayerEntered" from="Door" to="." method="OnDoorPlayerEntered"]

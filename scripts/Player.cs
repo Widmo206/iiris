@@ -41,7 +41,6 @@ public partial class Player : CharacterBody2D
 	public const int UpdatesPerSecond			= 60;				// ticks/second;
 
 	// other technical shit
-	Random random = new Random();
 	public enum State
 	{
 		// stationary
@@ -86,7 +85,8 @@ public partial class Player : CharacterBody2D
 	Area2D				DamageDetector;
 	Area2D				SlopeDetector;
 	TileMapLayer		Ground;
-	AudioStreamPlayer	JumpSFX;
+	AudioStreamPlayer2D	JumpSFX;
+	AudioStreamPlayer2D	DashSFX;
 	PackedScene			dashEffect;
 
 	CollisionShape2D	StandingCollider;
@@ -152,12 +152,6 @@ public partial class Player : CharacterBody2D
 		}
 	}
 
-	private void playJumpSFX()
-	{
-		// moved to a separate function
-		JumpSFX.PitchScale = 1f + ((float)random.NextDouble() - 0.5f) * 0.1f;
-		JumpSFX.Play();
-	}
 
 	private void tryCreateDashEffect()
 	{
@@ -183,7 +177,8 @@ public partial class Player : CharacterBody2D
 		SlopeDetector		= GetNode<Area2D>("SlopeDetector");
 		DamageDetector		= GetNode<Area2D>("DamageDetector");
 		Ground				= LevelScene.GetNode<TileMapLayer>("Terrain/Ground");
-		JumpSFX				= GetNode<AudioStreamPlayer>("JumpSfx");
+		JumpSFX				= GetNode<AudioStreamPlayer2D>("JumpSFX");
+		DashSFX				= GetNode<AudioStreamPlayer2D>("DashSFX");
 
 		StandingCollider	= GetNode<CollisionShape2D>("StandingCollider");
 		CrouchingCollider	= GetNode<CollisionShape2D>("CrouchingCollider");
@@ -330,6 +325,7 @@ public partial class Player : CharacterBody2D
 				isGrounded = false;
 				stateLockCountdown = DashDuration;
 				canDash = false;
+				DashSFX.Play();
 			}
 			else if (Input.IsActionJustPressed("dash"))
 			{
@@ -372,7 +368,7 @@ public partial class Player : CharacterBody2D
 
 				currentState = State.Jumping;
 				isGrounded = false;
-				playJumpSFX();
+				JumpSFX.Play();
 			}
 			else if (canWalljump && isntStateLocked())
 			{
@@ -400,7 +396,7 @@ public partial class Player : CharacterBody2D
 				velocity.Y += (1 + Mathf.Atan(velocity.Y * 0.01f) * 2 / Mathf.Pi) * -JumpVelocity / Mathf.Sqrt2;
 				velocity.X = walljumpDirection * -JumpVelocity / Mathf.Sqrt2 /*- 0.5f* walljumpDirection*Mathf.Abs(velocity.X)*/;
 				facingDirection = -walljumpDirection; // TIL the decimal point isn't required // that comment is out of place now because I changed this to an int // it's not even a literal anymore
-				playJumpSFX();
+				JumpSFX.Play();
 			}
 			else if (Input.IsActionJustPressed("jump")) // checking again so buffer is only updated on button press
 			{

@@ -35,7 +35,7 @@ public partial class AirlockDoor : StaticBody2D
 
 	public void Open()
 	{
-		if (IsEnabled)
+		if (IsEnabled && currentState == State.Closed)
 		{
 			currentState = State.Opening;
 			TrySetAnimation(GearL, "spinning_left");
@@ -48,7 +48,7 @@ public partial class AirlockDoor : StaticBody2D
 
 	public void Close()
 	{
-		if (IsEnabled)
+		if (IsEnabled && currentState == State.Open)
 		{
 			currentState = State.Closing;
 			TrySetAnimation(GearL, "spinning_right");

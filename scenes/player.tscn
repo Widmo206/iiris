@@ -1,12 +1,16 @@
-[gd_scene load_steps=48 format=3 uid="uid://dv16mjenwd7rn"]
+[gd_scene load_steps=54 format=3 uid="uid://dv16mjenwd7rn"]
 
 [ext_resource type="Script" uid="uid://d5ha03kt30lg" path="res://scripts/Player.cs" id="1_8tq0c"]
 [ext_resource type="Texture2D" uid="uid://cjp6353do2nsq" path="res://sprites/DinoSprites - vita.png" id="2_fuuox"]
-[ext_resource type="AudioStream" uid="uid://y54u2g4dhcu6" path="res://sounds/jump.wav" id="3_gamhb"]
+[ext_resource type="AudioStream" uid="uid://kdsuwpdtcvn4" path="res://sounds/swoosh1.mp3" id="3_d2wvv"]
+[ext_resource type="AudioStream" uid="uid://4fjqm10od4qk" path="res://sounds/swoosh2.mp3" id="4_3v2ag"]
 [ext_resource type="Script" uid="uid://gywxlc0y80d3" path="res://scripts/WalljumpDetector.cs" id="4_fjrip"]
 [ext_resource type="Texture2D" uid="uid://cbkg5jrkylnnh" path="res://sprites/red.png" id="4_qlg0r"]
+[ext_resource type="AudioStream" uid="uid://fssmljg16q7v" path="res://sounds/dash.mp3" id="4_smehm"]
 [ext_resource type="Texture2D" uid="uid://cppkphee80t0a" path="res://sprites/yellow.png" id="5_fjrip"]
+[ext_resource type="AudioStream" uid="uid://qg3hse2jmk6a" path="res://sounds/swoosh3.mp3" id="5_jej6c"]
 [ext_resource type="Texture2D" uid="uid://chnjkh0df10o2" path="res://sprites/green.png" id="5_tuyoq"]
+[ext_resource type="AudioStream" uid="uid://cmqjs7bxbubao" path="res://sounds/swoosh4.mp3" id="6_f1ej7"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tuyoq"]
 atlas = ExtResource("2_fuuox")
@@ -305,6 +309,19 @@ height = 16.0
 radius = 6.0
 height = 12.0
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_oprun"]
+random_volume_offset_db = 0.55
+streams_count = 4
+stream_0/stream = ExtResource("3_d2wvv")
+stream_1/stream = ExtResource("4_3v2ag")
+stream_2/stream = ExtResource("5_jej6c")
+stream_3/stream = ExtResource("6_f1ej7")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_d2wvv"]
+random_volume_offset_db = 0.55
+streams_count = 1
+stream_0/stream = ExtResource("4_smehm")
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qhqgy"]
 size = Vector2(2, 2)
 
@@ -374,8 +391,13 @@ position_smoothing_enabled = true
 position_smoothing_speed = 20.0
 drag_vertical_enabled = true
 
-[node name="JumpSfx" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_gamhb")
+[node name="JumpSFX" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamRandomizer_oprun")
+max_polyphony = 4
+
+[node name="DashSFX" type="AudioStreamPlayer2D" parent="."]
+stream = SubResource("AudioStreamRandomizer_d2wvv")
+max_polyphony = 4
 
 [node name="WalljumpDetector" type="Node2D" parent="."]
 visible = false
