@@ -30,6 +30,7 @@ public partial class AirlockDoor : StaticBody2D
 	AnimatedSprite2D GearL;
 	AnimatedSprite2D GearR;
 	AnimatableBody2D Door;
+	AudioStreamPlayer2D CloseSFX;
 
 
 	public void Open()
@@ -39,6 +40,7 @@ public partial class AirlockDoor : StaticBody2D
 			currentState = State.Opening;
 			TrySetAnimation(GearL, "spinning_left");
 			TrySetAnimation(GearR, "spinning_right");
+			CloseSFX.Play();
 			//GearL.Animation = "spinning_right"; // stoopid
 			//GearR.Animation = "spinning_left";  // I tried to set the animation instead of Play()'ing it
 		}
@@ -51,6 +53,7 @@ public partial class AirlockDoor : StaticBody2D
 			currentState = State.Closing;
 			TrySetAnimation(GearL, "spinning_right");
 			TrySetAnimation(GearR, "spinning_left");
+			CloseSFX.Play();
 			//GearL.Animation = "spinning_left";
 			//GearR.Animation = "spinning_right";
 		}
@@ -80,6 +83,7 @@ public partial class AirlockDoor : StaticBody2D
 		GearL = GetNode<AnimatedSprite2D>("GearL");
 		GearR = GetNode<AnimatedSprite2D>("GearR");
 		Door  = GetNode<AnimatableBody2D>("Door");
+		CloseSFX = GetNode<AudioStreamPlayer2D>("CloseSFX");
 
 		if (currentState == State.Closed)
 		{
