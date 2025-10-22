@@ -30,6 +30,12 @@ public partial class Level : Node2D
 	}
 
 
+	public void LoadLevel(string level)
+	{
+		OnDoorPlayerEntered((Variant)level);
+	}
+
+
 	public void OnDoorPlayerEntered(Variant level)
 	{
 		int coinsCollected = (int)GetNode("/root/Global").Get("coinsCollected");

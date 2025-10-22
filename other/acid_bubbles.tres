@@ -1,6 +1,6 @@
 [gd_resource type="VisualShader" load_steps=10 format=3 uid="uid://ccgus8qsl3dsn"]
 
-[ext_resource type="CompressedTexture2DArray" uid="uid://c38au2r5d48d" path="res://sprites/bubbles.png" id="1_5ewt5"]
+[ext_resource type="CompressedTexture2DArray" uid="uid://c38au2r5d48d" path="res://sprites/bubbles.png" id="1_1qqp0"]
 
 [sub_resource type="VisualShaderNodeVec2Constant" id="VisualShaderNodeVec2Constant_5ewt5"]
 
@@ -15,7 +15,7 @@ function = 16
 [sub_resource type="VisualShaderNodeTexture2DArray" id="VisualShaderNodeTexture2DArray_10j4h"]
 output_port_for_preview = 0
 source = 1
-texture_array = ExtResource("1_5ewt5")
+texture_array = ExtResource("1_1qqp0")
 
 [sub_resource type="VisualShaderNodeTexture2DArrayParameter" id="VisualShaderNodeTexture2DArrayParameter_ky28t"]
 parameter_name = "Texture"

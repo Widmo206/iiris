@@ -4,11 +4,13 @@ using System;
 public partial class AirlockDoor : StaticBody2D
 {
 	[Export]
-	float ClosedPosition = -2f;
+	private float ClosedPosition = -2f;
 	[Export]
-	float OpenPosition = -56f;
+	private float OpenPosition = -56f;
 	[Export]
-	float Speed = 1f;
+	public float Speed = 1f;
+	[Export]
+	public bool IsEnabled = true;
 
 	[Signal]
 	public delegate void DoorClosedEventHandler();
@@ -32,26 +34,35 @@ public partial class AirlockDoor : StaticBody2D
 
 	public void Open()
 	{
-		currentState = State.Opening;
-		TrySetAnimation(GearL, "spinning_left");
-		TrySetAnimation(GearR, "spinning_right");
-		//GearL.Animation = "spinning_right"; // stoopid
-		//GearR.Animation = "spinning_left";  // I tried to set the animation instead of Play()'ing it
+		if (IsEnabled)
+		{
+			currentState = State.Opening;
+			TrySetAnimation(GearL, "spinning_left");
+			TrySetAnimation(GearR, "spinning_right");
+			//GearL.Animation = "spinning_right"; // stoopid
+			//GearR.Animation = "spinning_left";  // I tried to set the animation instead of Play()'ing it
+		}
 	}
 
 	public void Close()
 	{
-		currentState = State.Closing;
-		TrySetAnimation(GearL, "spinning_right");
-		TrySetAnimation(GearR, "spinning_left");
-		//GearL.Animation = "spinning_left";
-		//GearR.Animation = "spinning_right";
+		if (IsEnabled)
+		{
+			currentState = State.Closing;
+			TrySetAnimation(GearL, "spinning_right");
+			TrySetAnimation(GearR, "spinning_left");
+			//GearL.Animation = "spinning_left";
+			//GearR.Animation = "spinning_right";
+		}
 	}
 
 	public void Toggle()
 	{
-		if (currentState == State.Closed) { Open(); }
-		else if (currentState == State.Open) { Close(); }
+		if (IsEnabled)
+		{
+			if (currentState == State.Closed) { Open(); }
+			else if (currentState == State.Open) { Close(); }
+		}
 	}
 
 	private void TrySetAnimation(AnimatedSprite2D sprite, string animationName)
@@ -83,7 +94,7 @@ public partial class AirlockDoor : StaticBody2D
 		Vector2 position = Door.Position;
 		float moveSpeed = 0f;
 
-		if (currentState == State.Closing)
+		if (currentState == State.Closing && IsEnabled)
 		{
 			if (position.Y >= ClosedPosition)
 			{
@@ -99,7 +110,7 @@ public partial class AirlockDoor : StaticBody2D
 				moveSpeed = Speed;
 			}
 		}
-		else if (currentState == State.Opening)
+		else if (currentState == State.Opening && IsEnabled)
 		{
 			if (position.Y <= OpenPosition)
 			{

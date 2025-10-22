@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://pykixr7eeuoy"]
+
+[ext_resource type="Script" uid="uid://chsn633futh6c" path="res://scripts/Airlock.cs" id="1_r5ci8"]
+[ext_resource type="PackedScene" uid="uid://etxsm354qhno" path="res://scenes/airlock_door.tscn" id="2_ciqjm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jw0rx"]
+size = Vector2(104, 72)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8u37j"]
+size = Vector2(36, 72)
+
+[node name="Airlock" type="Node2D"]
+script = ExtResource("1_r5ci8")
+
+[node name="AirlockDoorL" parent="." instance=ExtResource("2_ciqjm")]
+position = Vector2(-60, 0)
+
+[node name="AirlockDoorR" parent="." instance=ExtResource("2_ciqjm")]
+position = Vector2(60, 0)
+
+[node name="PlayerPresenceChecker" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="Collider" type="CollisionShape2D" parent="PlayerPresenceChecker"]
+position = Vector2(0, -36)
+shape = SubResource("RectangleShape2D_jw0rx")
+
+[node name="Trigger" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="Collider" type="CollisionShape2D" parent="Trigger"]
+position = Vector2(0, -36)
+shape = SubResource("RectangleShape2D_8u37j")
+
+[connection signal="DoorClosed" from="AirlockDoorL" to="." method="OnLeftDoorClosed"]
+[connection signal="DoorClosed" from="AirlockDoorR" to="." method="OnRightDoorClosed"]
+[connection signal="body_entered" from="Trigger" to="." method="OnPlayeEntered"]
