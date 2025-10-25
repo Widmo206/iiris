@@ -4,8 +4,8 @@ using System.Reflection.Emit;
 
 public partial class Cutscene : CanvasLayer
 {
-	[Export]
-	public string NextLevel = "";
+	[Export(PropertyHint.File, "*.tscn,")]
+	public string NextLevel = null;
 
 	Control Page1;
 	Control Page2;

@@ -128,12 +128,12 @@ texture = ExtResource("1_wo2mm")
 [node name="Shadow" type="AnimatedSprite2D" parent="."]
 position = Vector2(-1, -44)
 sprite_frames = SubResource("SpriteFrames_hitt4")
-frame_progress = 0.835513
+frame_progress = 0.779323
 
 [node name="Bubbles" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -48)
 sprite_frames = SubResource("SpriteFrames_cjdd5")
-frame_progress = 0.271089
+frame_progress = 0.866077
 
 [node name="Base" type="Sprite2D" parent="."]
 position = Vector2(0, -36)

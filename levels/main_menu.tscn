@@ -1,23 +1,23 @@
 [gd_scene load_steps=9 format=4 uid="uid://bbnnitvnr5thj"]
 
-[ext_resource type="Script" uid="uid://nuiac7uthg14" path="res://scripts/MainMenu.cs" id="1_4cvkl"]
-[ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="1_sl7id"]
-[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://other/nk57-monospace.cdrg-bold.otf" id="2_wu84c"]
-[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://other/debug-ui-settings.tres" id="3_8ln24"]
+[ext_resource type="Script" uid="uid://nuiac7uthg14" path="res://scripts/MainMenu.cs" id="1_7rktv"]
+[ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://other/nk57-monospace.cdrg-bold.otf" id="2_3ye4h"]
+[ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://other/debug-ui-settings.tres" id="3_nwbki"]
+[ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="4_pppj1"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rtw2f"]
-font = ExtResource("2_wu84c")
+font = ExtResource("2_3ye4h")
 font_size = 64
 font_color = Color(0.12549, 0.00392157, 0.219608, 1)
 shadow_size = 2
 shadow_color = Color(0, 0, 0, 0.74902)
 
 [sub_resource type="Theme" id="Theme_oa1go"]
-default_font = ExtResource("2_wu84c")
+default_font = ExtResource("2_3ye4h")
 default_font_size = 64
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_vhy51"]
-texture = ExtResource("1_sl7id")
+texture = ExtResource("4_pppj1")
 separation = Vector2i(1, 1)
 texture_region_size = Vector2i(24, 24)
 0:0/0 = 0
@@ -50,7 +50,8 @@ tile_size = Vector2i(24, 24)
 sources/0 = SubResource("TileSetAtlasSource_vhy51")
 
 [node name="MainMenu" type="Node2D"]
-script = ExtResource("1_4cvkl")
+script = ExtResource("1_7rktv")
+NextLevel = "uid://onw41dlugots"
 
 [node name="TitleLabel" type="Label" parent="."]
 offset_top = 100.0
@@ -84,7 +85,7 @@ Widmo206
 Kenney
 Arks
 PiiiXL"
-label_settings = ExtResource("3_8ln24")
+label_settings = ExtResource("3_nwbki")
 horizontal_alignment = 1
 
 [node name="anchor1" type="Node2D" parent="."]

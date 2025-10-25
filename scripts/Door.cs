@@ -3,8 +3,8 @@ using System;
 
 public partial class Door : Area2D
 {
-	[Export]
-	public string Level = "";
+	[Export(PropertyHint.File, "*.tscn,")]
+	public string Level = null;
 
 	[Signal]
 	public delegate void PlayerEnteredEventHandler(string Level);

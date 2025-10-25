@@ -1,13 +1,13 @@
 [gd_scene load_steps=5 format=3 uid="uid://onw41dlugots"]
 
-[ext_resource type="Script" uid="uid://dwv1hqenqujxy" path="res://scripts/Cutscene.cs" id="1_a320b"]
-[ext_resource type="PackedScene" uid="uid://ob8fjmn04eo2" path="res://scenes/exposition_box.tscn" id="1_edmg7"]
-[ext_resource type="Texture2D" uid="uid://c60nvjilj7pvq" path="res://sprites/cutscene-bg.png" id="2_0sipp"]
-[ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://other/sign-text-settings.tres" id="3_2bm7f"]
+[ext_resource type="Script" uid="uid://dwv1hqenqujxy" path="res://scripts/Cutscene.cs" id="1_yildc"]
+[ext_resource type="Texture2D" uid="uid://c60nvjilj7pvq" path="res://sprites/cutscene-bg.png" id="2_y7chl"]
+[ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://other/sign-text-settings.tres" id="3_up1nh"]
+[ext_resource type="PackedScene" uid="uid://ob8fjmn04eo2" path="res://scenes/exposition_box.tscn" id="4_56s36"]
 
 [node name="Cutscene" type="CanvasLayer"]
-script = ExtResource("1_a320b")
-NextLevel = "res://scenes/level_1.tscn"
+script = ExtResource("1_yildc")
+NextLevel = "uid://df74hbluohwsl"
 
 [node name="Background" type="TextureRect" parent="."]
 z_index = -1
@@ -17,7 +17,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("2_0sipp")
+texture = ExtResource("2_y7chl")
 stretch_mode = 1
 
 [node name="Control" type="Control" parent="Background"]
@@ -47,7 +47,7 @@ offset_bottom = 11.5
 grow_horizontal = 2
 grow_vertical = 2
 text = "Press any key to continue"
-label_settings = ExtResource("3_2bm7f")
+label_settings = ExtResource("3_up1nh")
 
 [node name="Page1" type="Control" parent="."]
 layout_mode = 3
@@ -63,7 +63,7 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ExpositionBox1" parent="Page1" instance=ExtResource("1_edmg7")]
+[node name="ExpositionBox1" parent="Page1" instance=ExtResource("4_56s36")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -77,7 +77,7 @@ grow_vertical = 2
 Text = "You were out, looking for materials for your next experiment, when, in the distance, you witnessed the opening of a Portal. A swirling mass of red, and gold, and all the shades between, with a black slit down the middle, like a cat's eye."
 FadeinTime = 40
 
-[node name="ExpositionBox2" parent="Page1" instance=ExtResource("1_edmg7")]
+[node name="ExpositionBox2" parent="Page1" instance=ExtResource("4_56s36")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -92,7 +92,7 @@ Text = "Out of it came humans. Soldiers. Scholars. They bore tools and weapons u
 Delay = 200
 FadeinTime = 40
 
-[node name="ExpositionBox3" parent="Page1" instance=ExtResource("1_edmg7")]
+[node name="ExpositionBox3" parent="Page1" instance=ExtResource("4_56s36")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -105,7 +105,7 @@ Text = "You approached them, curious, friendly, foolish. You were captured. Take
 Delay = 400
 FadeinTime = 40
 
-[node name="ExpositionBox4" parent="Page1" instance=ExtResource("1_edmg7")]
+[node name="ExpositionBox4" parent="Page1" instance=ExtResource("4_56s36")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -120,7 +120,7 @@ Text = "You were thrown into a tank. The vessel was filled with liquid, red and 
 Delay = 600
 FadeinTime = 40
 
-[node name="ExpositionBox5" parent="Page1" instance=ExtResource("1_edmg7")]
+[node name="ExpositionBox5" parent="Page1" instance=ExtResource("4_56s36")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -150,7 +150,7 @@ offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ExpositionBox6" parent="Page2" instance=ExtResource("1_edmg7")]
+[node name="ExpositionBox6" parent="Page2" instance=ExtResource("4_56s36")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -164,7 +164,7 @@ grow_vertical = 2
 Text = "You stir awake, the world in chaos.  The entire facility is shaken violently, as if a mountain were dropped upon it. As the ceiling cracks and crumbles, a mechanical siren joins the cacophony with its rugged, metallic shriek."
 FadeinTime = 40
 
-[node name="ExpositionBox7" parent="Page2" instance=ExtResource("1_edmg7")]
+[node name="ExpositionBox7" parent="Page2" instance=ExtResource("4_56s36")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -177,7 +177,7 @@ Text = "Then, a piece of debris falls onto the sleeping-vat, its alchemical solu
 Delay = 200
 FadeinTime = 40
 
-[node name="ExpositionBox8" parent="Page2" instance=ExtResource("1_edmg7")]
+[node name="ExpositionBox8" parent="Page2" instance=ExtResource("4_56s36")]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

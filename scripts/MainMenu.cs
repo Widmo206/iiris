@@ -3,6 +3,10 @@ using System;
 
 public partial class MainMenu : Node2D
 {
+	[Export(PropertyHint.File, "*.tscn,")]
+	public string NextLevel { get; set; } = null;
+
+
 	public override void _Ready()
 	{
 		GD.Print("LOADED MainMenu.cs");
@@ -20,7 +24,7 @@ public partial class MainMenu : Node2D
 
 	public void OnStartButtonPressed()
 	{
-		GetTree().ChangeSceneToFile("res://scenes/cutscene.tscn");
+		GetTree().ChangeSceneToFile(NextLevel);
 	}
 
 	public void OnFullscreenButtonPressed()
