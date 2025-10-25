@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://d2640tr18f6ep"]
+
+[ext_resource type="Texture2D" uid="uid://dwpmjjt6ko1c1" path="res://sprites/fishtank-broken-back.png" id="1_k8et2"]
+[ext_resource type="Texture2D" uid="uid://b0ccn5mkluw75" path="res://sprites/fishtank-broken-front.png" id="2_awvtf"]
+
+[node name="FishtankBroken" type="StaticBody2D"]
+
+[node name="Back" type="Sprite2D" parent="."]
+position = Vector2(0, -48)
+texture = ExtResource("1_k8et2")
+
+[node name="Front" type="Sprite2D" parent="."]
+position = Vector2(0, -48)
+texture = ExtResource("2_awvtf")
+
+[node name="Collider" type="CollisionPolygon2D" parent="."]
+visible = false
+position = Vector2(0, -36)
+polygon = PackedVector2Array(-24, 36, -24, 12, -19, 12, -19, -36, 4, -34, 19, -30, 17, -24, -16, -29, -16, 12, 24, 12, 24, 36)
