@@ -1,7 +1,8 @@
-[gd_scene load_steps=21 format=3 uid="uid://cey1k1v8aeu3t"]
+[gd_scene load_steps=22 format=3 uid="uid://cey1k1v8aeu3t"]
 
 [ext_resource type="Texture2D" uid="uid://cwx2rt7fttrp1" path="res://sprites/fishtank-water.png" id="1_4o5xo"]
 [ext_resource type="Texture2D" uid="uid://dwo2juq87spwt" path="res://sprites/fishtank-fluid.png" id="1_wo2mm"]
+[ext_resource type="Script" uid="uid://di6t1ue1tou7i" path="res://scripts/Fishtank.cs" id="1_xaq8y"]
 [ext_resource type="Texture2D" uid="uid://qt2jng3o0ljx" path="res://sprites/fishtank-shadow-dino.png" id="2_wo2mm"]
 [ext_resource type="Texture2D" uid="uid://vhqtpwxv1d63" path="res://sprites/fishtank.png" id="3_xaq8y"]
 
@@ -120,6 +121,7 @@ animations = [{
 }]
 
 [node name="Fishtank" type="StaticBody2D"]
+script = ExtResource("1_xaq8y")
 
 [node name="Fluid" type="Sprite2D" parent="."]
 position = Vector2(0, -48)
@@ -128,12 +130,12 @@ texture = ExtResource("1_wo2mm")
 [node name="Shadow" type="AnimatedSprite2D" parent="."]
 position = Vector2(-1, -44)
 sprite_frames = SubResource("SpriteFrames_hitt4")
-frame_progress = 0.779323
+frame_progress = 0.971305
 
 [node name="Bubbles" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -48)
 sprite_frames = SubResource("SpriteFrames_cjdd5")
-frame_progress = 0.866077
+frame_progress = 0.406472
 
 [node name="Base" type="Sprite2D" parent="."]
 position = Vector2(0, -36)
