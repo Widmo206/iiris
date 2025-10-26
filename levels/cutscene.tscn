@@ -8,7 +8,7 @@
 
 [node name="Cutscene" type="CanvasLayer"]
 script = ExtResource("1_yildc")
-NextLevel = "uid://df74hbluohwsl"
+NextLevel = "uid://c3efsaebfpq0e"
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_up1nh")
