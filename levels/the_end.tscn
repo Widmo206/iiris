@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://bm5gv4xs1lrte" path="res://scripts/TheEnd.cs" id="1_2jfs8"]
 [ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://other/nk57-monospace.cdrg-bold.otf" id="2_fpimk"]
+[ext_resource type="AudioStream" uid="uid://engfhcng8qhv" path="res://sounds/Ove Melaa - Finally Home.ogg" id="2_mscqs"]
 [ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://other/debug-ui-settings.tres" id="3_pugnu"]
 [ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="4_fhtex"]
-[ext_resource type="AudioStream" uid="uid://llt8m8bed0do" path="res://sounds/BMGS.ogg" id="5_mscqs"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rtw2f"]
 font = ExtResource("2_fpimk")
@@ -55,7 +55,7 @@ script = ExtResource("1_2jfs8")
 NextLevel = "uid://bbnnitvnr5thj"
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_mscqs")
+stream = ExtResource("2_mscqs")
 autoplay = true
 
 [node name="TitleLabel" type="Label" parent="."]

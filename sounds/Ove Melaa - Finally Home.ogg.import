@@ -1,0 +1,19 @@
+[remap]
+
+importer="oggvorbisstr"
+type="AudioStreamOggVorbis"
+uid="uid://engfhcng8qhv"
+path="res://.godot/imported/Ove Melaa - Finally Home.ogg-6076c982abf2af38855eaf211618039c.oggvorbisstr"
+
+[deps]
+
+source_file="res://sounds/Ove Melaa - Finally Home.ogg"
+dest_files=["res://.godot/imported/Ove Melaa - Finally Home.ogg-6076c982abf2af38855eaf211618039c.oggvorbisstr"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
