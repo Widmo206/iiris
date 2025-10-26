@@ -38,7 +38,9 @@ public partial class Fishtank : StaticBody2D
 		if (TankType > Type.Filled)
 		{
 			Bubbles.Visible = true;
+			Bubbles.Play("default");
 			Shadow.Visible = true;
+			Shadow.Play("default");
 		}
 		else
 		{

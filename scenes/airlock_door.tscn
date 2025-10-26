@@ -124,3 +124,4 @@ shape = SubResource("RectangleShape2D_rora2")
 
 [node name="CloseSFX" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("6_ngguo")
+volume_db = 10.0
