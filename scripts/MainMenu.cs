@@ -11,10 +11,15 @@ public partial class MainMenu : Node2D
 	{
 		GD.Print("LOADED MainMenu.cs");
 		GetNode<Button>("anchor1/Options/StartButton").GrabFocus();
+
+		Label Credits = GetNode<Label>("anchor0/Credits");
+		using var file = FileAccess.Open("res://other/CREDITS.txt", FileAccess.ModeFlags.Read);
+		Credits.Text = file.GetAsText();
 	}
 
 	public override void _Process(double delta)
 	{
+		// wait, why isn't this in _Ready() ?
 		if (!OS.HasFeature("pc"))
 		{
 			GetNode<Button>("anchor1/Options/FullscreenButton").Hide();

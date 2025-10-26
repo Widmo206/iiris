@@ -52,6 +52,7 @@ sources/0 = SubResource("TileSetAtlasSource_vhy51")
 
 [node name="TheEnd" type="Node2D"]
 script = ExtResource("1_2jfs8")
+NextLevel = "uid://bbnnitvnr5thj"
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("5_mscqs")
@@ -125,15 +126,12 @@ offset_right = 342.0
 offset_bottom = 726.0
 grow_horizontal = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "Game by Widmo206
-- - -
-Music by yd & OveMelaa
-- - -
-Sprites by:
-Widmo206
-Kenney
-Arks
-PiiiXL"
+text = "Credits are now under
+res://other/CREDITS.txt
+
+
+If you can see this message,
+something went wrong :("
 label_settings = ExtResource("3_pugnu")
 horizontal_alignment = 1
 
