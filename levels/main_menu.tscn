@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=4 uid="uid://bbnnitvnr5thj"]
+[gd_scene load_steps=10 format=4 uid="uid://bbnnitvnr5thj"]
 
 [ext_resource type="Script" uid="uid://nuiac7uthg14" path="res://scripts/MainMenu.cs" id="1_7rktv"]
 [ext_resource type="FontFile" uid="uid://dpj4c2gw6un85" path="res://other/nk57-monospace.cdrg-bold.otf" id="2_3ye4h"]
 [ext_resource type="LabelSettings" uid="uid://bao85prxxo4rv" path="res://other/debug-ui-settings.tres" id="3_nwbki"]
 [ext_resource type="Texture2D" uid="uid://ynh0uiioebiw" path="res://sprites/tilemap-backgrounds.png" id="4_pppj1"]
+[ext_resource type="AudioStream" uid="uid://llt8m8bed0do" path="res://sounds/BMGS.ogg" id="5_3ye4h"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_rtw2f"]
 font = ExtResource("2_3ye4h")
@@ -52,6 +53,10 @@ sources/0 = SubResource("TileSetAtlasSource_vhy51")
 [node name="MainMenu" type="Node2D"]
 script = ExtResource("1_7rktv")
 NextLevel = "uid://onw41dlugots"
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_3ye4h")
+autoplay = true
 
 [node name="TitleLabel" type="Label" parent="."]
 offset_top = 100.0

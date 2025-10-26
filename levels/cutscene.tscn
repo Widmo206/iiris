@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://onw41dlugots"]
+[gd_scene load_steps=6 format=3 uid="uid://onw41dlugots"]
 
 [ext_resource type="Script" uid="uid://dwv1hqenqujxy" path="res://scripts/Cutscene.cs" id="1_yildc"]
+[ext_resource type="AudioStream" uid="uid://blgbposcfuyxt" path="res://sounds/Ove Melaa - Dark Blue.ogg" id="2_up1nh"]
 [ext_resource type="Texture2D" uid="uid://c60nvjilj7pvq" path="res://sprites/cutscene-bg.png" id="2_y7chl"]
 [ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://other/sign-text-settings.tres" id="3_up1nh"]
 [ext_resource type="PackedScene" uid="uid://ob8fjmn04eo2" path="res://scenes/exposition_box.tscn" id="4_56s36"]
@@ -8,6 +9,10 @@
 [node name="Cutscene" type="CanvasLayer"]
 script = ExtResource("1_yildc")
 NextLevel = "uid://df74hbluohwsl"
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("2_up1nh")
+autoplay = true
 
 [node name="Background" type="TextureRect" parent="."]
 z_index = -1
