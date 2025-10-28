@@ -79,7 +79,7 @@ offset_top = -200.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 2
-Text = "You were out, looking for materials for your next experiment, when, in the distance, you witnessed the opening of a Portal. A swirling mass of red, and gold, and all the shades between, with a black slit down the middle, like a cat's eye."
+Text = "You were out, looking for materials for your next experiment, when, in the distance, you witnessed the opening of a Rift. A swirling mass of red, and gold, and all the shades between, with a black slit down the middle, like a cat's eye."
 FadeinTime = 40
 
 [node name="ExpositionBox2" parent="Page1" instance=ExtResource("4_56s36")]
@@ -106,7 +106,7 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
-Text = "You approached them, curious, friendly, foolish. You were captured. Taken through the Portal, to a fortress carved into a mountain, with walls too smooth to be stone and plated with iron."
+Text = "You approached them, curious, friendly, foolish. You were captured. Taken through the Rift, to a fortress carved into a mountain, with walls too smooth to be stone and plated with iron."
 Delay = 400
 FadeinTime = 40
 
@@ -121,7 +121,7 @@ offset_top = 100.0
 offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
-Text = "You were thrown into a tank. The vessel was filled with liquid, red and salty, too thick to be water. As the strange solution filled your lungs, you felt your eyes grow heavy and your limbs go numb."
+Text = "You were thrown into a tank. The vessel was filled with liquid, violet and salty, too thick to be water. As the strange solution filled your lungs, you felt your eyes grow heavy and your limbs go numb."
 Delay = 600
 FadeinTime = 40
 
@@ -166,7 +166,7 @@ offset_top = -100.0
 offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
-Text = "You stir awake, the world in chaos.  The entire facility is shaken violently, as if a mountain were dropped upon it. As the ceiling cracks and crumbles, a mechanical siren joins the cacophony with its rugged, metallic shriek."
+Text = "You stir awake, the world in chaos. The entire facility is shaken violently, as if a mountain were dropped upon it. As the ceiling cracks and crumbles, a mechanical siren joins the cacophony with its rugged, metallic shriek."
 FadeinTime = 40
 
 [node name="ExpositionBox7" parent="Page2" instance=ExtResource("4_56s36")]
