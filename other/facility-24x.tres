@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=8 format=3 uid="uid://laxma6rveto2"]
+[gd_resource type="TileSet" load_steps=9 format=3 uid="uid://laxma6rveto2"]
 
 [ext_resource type="Texture2D" uid="uid://yadcujfpra0q" path="res://sprites/terrain-metal-24x.png" id="1_6wfaa"]
 [ext_resource type="Shader" uid="uid://dgvmrv7s0far7" path="res://other/acid_surface.gdshader" id="2_7dt8m"]
@@ -6,6 +6,9 @@
 
 [sub_resource type="TileMapPattern" id="TileMapPattern_0kjiu"]
 tile_data = PackedInt32Array(0, 917504, 9, 1, 983040, 9, 65537, 983040, 10)
+
+[sub_resource type="TileMapPattern" id="TileMapPattern_2y5gr"]
+tile_data = PackedInt32Array(0, 786432, 9, 1, 851968, 9)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_4gjkw"]
 texture = ExtResource("1_6wfaa")
@@ -1446,6 +1449,20 @@ texture_region_size = Vector2i(24, 24)
 8:18/0/terrain_set = 0
 8:18/0/terrain = 11
 9:15/0 = 0
+10:15/0 = 0
+10:15/0/physics_layer_2/polygon_0/points = PackedVector2Array(12, 6, 3, 6, 3, 12, 12, 12)
+11:15/0 = 0
+11:15/0/physics_layer_2/polygon_0/points = PackedVector2Array(12, 6, -12, 6, -12, 12, 12, 12)
+12:15/0 = 0
+12:15/0/physics_layer_2/polygon_0/points = PackedVector2Array(-12, 6, -3, 6, 3, 12, -12, 12)
+12:16/0 = 0
+12:16/0/physics_layer_2/polygon_0/points = PackedVector2Array(-12, 6, -3, 6, -3, 12, -12, 12)
+11:16/0 = 0
+11:16/0/physics_layer_2/polygon_0/points = PackedVector2Array(12, 6, -12, 6, -12, 12, 12, 12)
+10:16/0 = 0
+10:16/0/physics_layer_2/polygon_0/points = PackedVector2Array(12, 6, 3, 6, -3, 12, 12, 12)
+9:17/0 = 0
+10:17/0 = 0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dwkmr"]
 shader = ExtResource("2_7dt8m")
@@ -1575,3 +1592,4 @@ custom_data_layer_0/type = 5
 sources/0 = SubResource("TileSetAtlasSource_4gjkw")
 sources/1 = SubResource("TileSetAtlasSource_x2xdu")
 pattern_0 = SubResource("TileMapPattern_0kjiu")
+pattern_1 = SubResource("TileMapPattern_2y5gr")
