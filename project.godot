@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="IIRIS"
-run/main_scene="res://levels/main_menu.tscn"
+run/main_scene="res://levels/_main_menu.tscn"
 config/features=PackedStringArray("4.4", "C#", "GL Compatibility")
 config/icon="uid://cjiw2kgou8mm3"
 config/windows_native_icon="res://icon.ico"

@@ -92,7 +92,6 @@ texture = ExtResource("1_rora2")
 position = Vector2(-7, -68)
 sprite_frames = SubResource("SpriteFrames_6w07i")
 animation = &"stopped"
-frame_progress = 0.312115
 
 [node name="GearR" type="AnimatedSprite2D" parent="."]
 position = Vector2(7, -68)
