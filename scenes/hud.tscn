@@ -8,6 +8,7 @@ process_mode = 3
 script = ExtResource("1_ahhtf")
 
 [node name="PositionDisplay" type="Label" parent="."]
+visible = false
 offset_left = 7.0
 offset_top = 79.0
 offset_right = 74.0
@@ -20,6 +21,7 @@ text = "Position:
 label_settings = ExtResource("3_6fi6k")
 
 [node name="VelocityDisplay" type="Label" parent="."]
+visible = false
 offset_left = 7.0
 offset_top = 154.0
 offset_right = 73.0
@@ -32,6 +34,7 @@ text = "Velocity:
 label_settings = ExtResource("3_6fi6k")
 
 [node name="StateDisplay" type="Label" parent="."]
+visible = false
 offset_left = 7.0
 offset_top = 229.0
 offset_right = 189.0
