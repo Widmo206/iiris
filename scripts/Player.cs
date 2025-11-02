@@ -58,7 +58,7 @@ public partial class Player : CharacterBody2D
 		// interactions
 		Kicking,
 	}
-	public int VoidHeight;								// lower boundry of the world; the player dies if they cross it
+	public int VoidDepth;								// lower boundry of the world; the player dies if they cross it
 	public State currentState			= State.Idle;	// the player's current state
 	string currentHitbox				= "";			// which hitbox is currently enabled; only used by setHitbox to check if the requested hitbox is different from the current one
 	public int stateLockCountdown		= 0;			// ticks; how long until the state can be changed again
@@ -187,7 +187,7 @@ public partial class Player : CharacterBody2D
 
 		// other resources
 		dashEffect			= GD.Load<PackedScene>("res://scenes/dash_effect.tscn");
-		VoidHeight			= (int)LevelScene.Get("VoidHeight");
+		VoidDepth			= (int)LevelScene.Get("VoidDepth");
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -259,7 +259,7 @@ public partial class Player : CharacterBody2D
 
 
 		// Handle damage
-		if (DamageDetector.HasOverlappingBodies() || position.Y > VoidHeight)
+		if (DamageDetector.HasOverlappingBodies() || position.Y > VoidDepth)
 		{
 			isAlive = false;
 			currentState = State.Dead;
