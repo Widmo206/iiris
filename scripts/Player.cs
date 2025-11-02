@@ -267,6 +267,7 @@ public partial class Player : CharacterBody2D
 
 
 		// Handle Interaction
+		/*
 		if ((Input.IsActionJustPressed("interact") || kickBuffer > 0) && isAlive)
 		{
 			if (isGrounded && isntStateLocked())
@@ -281,6 +282,7 @@ public partial class Player : CharacterBody2D
 				kickBuffer = InputBuffer;
 			}
 		}
+		*/
 		if (currentState == State.Kicking)
 		{
 			InteractionCollider.Disabled = false;
