@@ -36,10 +36,6 @@ public partial class Collectible : Area2D
 		{
 			Show();
 		}
-		else
-		{
-			Hide();
-		}
 
 			EmitSignal(SignalName.CoinCollected);
 		isExhausted = true;
@@ -50,11 +46,15 @@ public partial class Collectible : Area2D
 
 	public override void _Process(double delta)
 	{
-		if (StartHidden && isExhausted)
+		if (isExhausted)
 		{
 			Color modulate = Modulate;
-			modulate.A += 0.1f;
+			modulate.A += 0.2f;
 			Modulate = modulate;
+
+			Vector2 scale = Scale;
+			scale *= 1.05f;
+			Scale = scale;
 		}
 	}
 

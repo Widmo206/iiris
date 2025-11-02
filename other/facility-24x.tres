@@ -1445,6 +1445,7 @@ texture_region_size = Vector2i(24, 24)
 8:18/0 = 0
 8:18/0/terrain_set = 0
 8:18/0/terrain = 11
+9:15/0 = 0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_dwkmr"]
 shader = ExtResource("2_7dt8m")
