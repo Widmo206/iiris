@@ -12,6 +12,7 @@ NextLevel = "uid://c3efsaebfpq0e"
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_up1nh")
+volume_db = -10.0
 autoplay = true
 
 [node name="Background" type="TextureRect" parent="."]
@@ -94,7 +95,7 @@ offset_bottom = -100.0
 grow_horizontal = 2
 grow_vertical = 2
 Text = "Out of it came humans. Soldiers. Scholars. They bore tools and weapons unlike any you have seen before, and rode heavy metal wagons."
-Delay = 200
+Delay = 260
 FadeinTime = 40
 
 [node name="ExpositionBox3" parent="Page1" instance=ExtResource("4_56s36")]
@@ -107,7 +108,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 Text = "You approached them, curious, friendly, foolish. You were captured. Taken through the Portal, to a fortress carved into a mountain, with walls too smooth to be stone and plated with iron."
-Delay = 400
+Delay = 520
 FadeinTime = 40
 
 [node name="ExpositionBox4" parent="Page1" instance=ExtResource("4_56s36")]
@@ -122,7 +123,7 @@ offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
 Text = "You were thrown into a tank. The vessel was filled with liquid, red and salty, too thick to be water. As the strange solution filled your lungs, you felt your eyes grow heavy and your limbs go numb."
-Delay = 600
+Delay = 780
 FadeinTime = 40
 
 [node name="ExpositionBox5" parent="Page1" instance=ExtResource("4_56s36")]
@@ -137,7 +138,7 @@ offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
 Text = "You felt your consciousness slip away."
-Delay = 800
+Delay = 1040
 FadeinTime = 40
 
 [node name="Page2" type="Control" parent="."]
@@ -179,7 +180,7 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 Text = "Then, a piece of debris falls onto the sleeping-vat, its alchemical solution spilling out onto the floor. With the fluid gone, your strength returns."
-Delay = 200
+Delay = 260
 FadeinTime = 40
 
 [node name="ExpositionBox8" parent="Page2" instance=ExtResource("4_56s36")]
@@ -194,5 +195,5 @@ offset_bottom = 100.0
 grow_horizontal = 2
 grow_vertical = 2
 Text = "You open your eyes."
-Delay = 400
+Delay = 520
 FadeinTime = 40

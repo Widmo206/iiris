@@ -337,7 +337,6 @@ TO CONTINUE"
 
 [node name="AlarmSFX" type="AudioStreamPlayer2D" parent="Props/Sign"]
 stream = ExtResource("8_8fjoy")
-volume_db = -1.0
 autoplay = true
 
 [node name="Airlock" parent="Props" instance=ExtResource("8_lg0fl")]
