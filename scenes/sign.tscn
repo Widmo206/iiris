@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://cx38yscwjfjn7"]
 
 [ext_resource type="Script" uid="uid://dpfsn3gxi0weg" path="res://scripts/Sign.cs" id="1_kd50q"]
-[ext_resource type="Texture2D" uid="uid://behw43jut2p55" path="res://sprites/kenney-platformer-tilemap.png" id="1_shbub"]
+[ext_resource type="Texture2D" uid="uid://yadcujfpra0q" path="res://sprites/terrain-metal-24x.png" id="2_ge2pc"]
 [ext_resource type="Texture2D" uid="uid://b6ua68et8jyld" path="res://sprites/kenney-rock-tilemap.png" id="3_8yyji"]
 [ext_resource type="LabelSettings" uid="uid://clbdeqbc2g11u" path="res://other/sign-text-settings.tres" id="3_ge2pc"]
 
@@ -9,8 +9,8 @@
 radius = 32.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8yyji"]
-atlas = ExtResource("1_shbub")
-region = Rect2(114, 76, 18, 18)
+atlas = ExtResource("2_ge2pc")
+region = Rect2(225, 375, 24, 24)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ge2pc"]
 atlas = ExtResource("3_8yyji")
@@ -28,7 +28,7 @@ collision_mask = 2
 shape = SubResource("CircleShape2D_kd50q")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -9)
+position = Vector2(0, -12)
 texture = SubResource("AtlasTexture_8yyji")
 
 [node name="Message" type="Node2D" parent="."]
