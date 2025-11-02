@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://3afwqbekc0at"]
+
+[ext_resource type="PackedScene" uid="uid://btimyafuh6u0b" path="res://scenes/collectible.tscn" id="1_un8ov"]
+
+[node name="Hidden" instance=ExtResource("1_un8ov")]
+modulate = Color(1, 0.533333, 0, 1)
+StartHidden = true

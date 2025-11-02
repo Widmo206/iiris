@@ -3,6 +3,12 @@ using System;
 
 public partial class Collectible : Area2D
 {
+	[Export]
+	public bool StartHidden { get; set; } = false;
+
+	[Signal]
+	public delegate void CoinCollectedEventHandler();
+
 	Random random = new Random();
 	bool isExhausted = false;
 
@@ -10,10 +16,12 @@ public partial class Collectible : Area2D
 	{
 		//GD.Print("LOADED Collectible.cs");
 		// this.Connect("CoinCollected", GetNode<Node2D>("Level"), "OnCoinCollected");
+		if (StartHidden)
+		{
+			Visible = false;
+		}
 	}
 
-	[Signal]
-	public delegate void CoinCollectedEventHandler();
 
 	public void OnBodyEntered(Node2D collidingEntity)
 	{
@@ -24,12 +32,30 @@ public partial class Collectible : Area2D
 		//coinsCollected++;
 		//GetNode("/root/Global").Set("coinsCollected", (Variant)coinsCollected);
 
-		EmitSignal(SignalName.CoinCollected);
+		if (StartHidden)
+		{
+			Show();
+		}
+		else
+		{
+			Hide();
+		}
+
+			EmitSignal(SignalName.CoinCollected);
 		isExhausted = true;
 		// Why didn't I add the random pitch earlier? 
 		GetNode<AudioStreamPlayer>("CoinPickupSfx").PitchScale = 1f + ((float)random.NextDouble() - 0.5f) * 0.1f;
 		GetNode<AudioStreamPlayer>("CoinPickupSfx").Play();
-		Hide();
+	}
+
+	public override void _Process(double delta)
+	{
+		if (StartHidden && isExhausted)
+		{
+			Color modulate = Modulate;
+			modulate.A += 0.1f;
+			Modulate = modulate;
+		}
 	}
 
 	public void OnCoinPickupSfxFinished()
